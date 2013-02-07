@@ -10,6 +10,7 @@
 
 using namespace boost::interprocess;
 
+const char SHM_NAME[] = "MD.EXCHANGE";
 
 typedef int KeyType; // want to change this later to pair<string, string>
 

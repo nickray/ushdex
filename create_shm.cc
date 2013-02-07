@@ -5,11 +5,11 @@ using namespace std;
 
 int main ()
 {
-   shared_memory_object::remove("MySharedMemory");
+   shared_memory_object::remove(SHM_NAME);
 
-   managed_shared_memory segment(create_only, "MySharedMemory", 65536);
+   managed_shared_memory segment(create_only, SHM_NAME, 65536);
 /*
-   managed_shared_memory segment(create_only, "MySharedMemory", 1);
+   managed_shared_memory segment(create_only, "SHM_NAME", 1);
 
     terminate called after throwing an instance of 'boost::interprocess::interprocess_exception'
       what():  boost::interprocess_exception::library_error
@@ -29,7 +29,7 @@ int main ()
    // Set to zero
    for(KeyType i = 0; i != 100; ++i) {
        long_dex->insert(std::pair<const KeyType, long>(i, 0));
-       double_dex->insert(std::pair<const KeyType, double>(i, 0.));
+       double_dex->insert(std::pair<const KeyType, double>(i, 0));
    }
 
    cout << "After allocation, " << segment.get_free_memory() << " free memory remains.\n";
