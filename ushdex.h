@@ -64,9 +64,18 @@ struct key_less : std::binary_function <KeyType, KeyType, bool>
       {return x.rel_contract < y.rel_contract || x.data < y.data;}
 };
 
+/*
 template<class T> using ValueType = std::pair<const KeyType, T>;
 
 template<class T> using ValueTypeAllocator = typedef allocator<ValueType, segment_manager_t>;
 
 template<class T> using DataExchange = map<KeyType, T, key_less, ValueTypeAllocator>;
+*/
 
+typedef std::pair<const KeyType, double> DoubleValueType;
+typedef allocator<DoubleValueType, segment_manager_t> DoubleValueTypeAllocator;
+typedef map<KeyType, double, key_less, DoubleValueTypeAllocator> DoubleDataExchange;
+
+typedef std::pair<const KeyType, long> LongValueType;
+typedef allocator<LongValueType, segment_manager_t> LongValueTypeAllocator;
+typedef map<KeyType, long, key_less, LongValueTypeAllocator> LongDataExchange;

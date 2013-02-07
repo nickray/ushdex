@@ -17,10 +17,14 @@ int main ()
 
    void_allocator allocator(segment.get_segment_manager());
 
-   DataExchange<long> * long_dex = 
-       segment.construct<DataExchange<long>>("LongDataExchange") (key_less(), allocator);
+   DoubleDataExchange * double_dex = 
+       segment.construct<DoubleDataExchange>("DoubleDataExchange") (key_less(), allocator);
+   LongDataExchange * long_dex = 
+       segment.construct<LongDataExchange>("LongDataExchange") (key_less(), allocator);
 
-   long_dex->insert(LongValueType(KeyType("CL.GLOB.0", "last_traded_price", allocator), 9590L)); 
+   double_dex->insert(DoubleValueType(KeyType("CL.GLOB.0", "last_traded_price", allocator), 9590.)); 
+
+   long_dex->insert(LongValueType(KeyType("CL.GLOB.0", "last_update", allocator), 1360258008084400896)); 
 
    return 0;
 }
