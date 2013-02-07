@@ -18,8 +18,8 @@ typedef std::pair<const KeyType, double> DoubleValueType;
 
 // todo: replace this and the following with template<T>
 
-typedef allocator<void, managed_shared_memory::segment_manager>
-  VoidShmAllocator;
+//typedef allocator<void, managed_shared_memory::segment_manager>
+//  VoidShmAllocator;
 
 typedef allocator<LongValueType, managed_shared_memory::segment_manager>
   LongShmAllocator;
@@ -33,6 +33,5 @@ typedef map<KeyType, long, std::less<KeyType>, LongShmAllocator>
 typedef map<KeyType, double, std::less<KeyType>, DoubleShmAllocator>
   DoubleDataExchange;
 
-
-
 //typedef basic_string<char, std::char_traits<char>, char_allocator> char_string;
+
