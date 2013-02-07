@@ -5,39 +5,37 @@ using namespace std;
 
 int main ()
 {
+   // recreate shared memory segment and get allocator for it
    shared_memory_object::remove(SHM_NAME);
-
    managed_shared_memory segment(create_only, SHM_NAME, 65536);
-/*
- * If the size is too small, we can get sudden exceptions:
- *
-   managed_shared_memory segment(create_only, "SHM_NAME", 1);
-
-    terminate called after throwing an instance of 'boost::interprocess::interprocess_exception'
-      what():  boost::interprocess_exception::library_error
-*/
-
    void_allocator allocator(segment.get_segment_manager());
 
-   DoubleDataExchange * double_dex = 
-       segment.construct<DoubleDataExchange>("DoubleDataExchange") (key_less(), allocator);
-   LongDataExchange * long_dex = 
-       segment.construct<LongDataExchange>("LongDataExchange") (key_less(), allocator);
+   // construct the two hash tables
+   DoubleDataExchange & double_dex
+       (*segment.construct<DoubleDataExchange>("DoubleDataExchange") (key_less(), allocator));
+   LongDataExchange & long_dex
+       (*segment.construct<LongDataExchange>("LongDataExchange") (key_less(), allocator));
 
-   // Insert some double data
-   double_dex->insert(DoubleValueType(KeyType("CL.GLOB.0", "last_traded_price", allocator), 9590.)); 
+   /*
+    * the above part belongs to create_shm
+    *
+    * the below part should be split between write_shm and read_shm
+    *
+    */
 
-   // Some long data too
-   KeyType my_key("CL.GLOB.0", "last_update", allocator);
-   long_dex->insert(LongValueType(my_key, 1360258008084400896)); 
+   // our keys for today
+   KeyType price_key("CL.F.GLOB.0", "last_traded_price", allocator);
+   KeyType update_key("CL.F.GLOB.0", "last_update", allocator);
+   
+   // insert some data
+   double_dex[price_key] = 9590.;
+   long_dex[update_key] = 1360258008084400896;
 
-   // Direct access works, once the data has been located via the keys
-   long & my_last_update((*long_dex)[my_key]);
-
+   // direct access works once the data has been located via the keys
+   long & my_last_update(long_dex[update_key]);
    cout << "I haven't forgotten: " << my_last_update << endl;
-
    my_last_update /= 37;
-   cout << "Manipulated: " << long_dex->at(my_key) << endl;
+   cout << "Manipulated: " << long_dex[update_key] << endl;
 
    return 0;
 }
