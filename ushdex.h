@@ -79,3 +79,14 @@ typedef map<KeyType, double, key_less, DoubleValueTypeAllocator> DoubleDataExcha
 typedef std::pair<const KeyType, long> LongValueType;
 typedef allocator<LongValueType, segment_manager_t> LongValueTypeAllocator;
 typedef map<KeyType, long, key_less, LongValueTypeAllocator> LongDataExchange;
+
+/*
+ * What we'd really like to do here is use template aliases:
+ *
+ * template <typename T>
+ * using ValueType = std::pair<const KeyType, T>
+ * (...)
+ *
+ * But this is only supported in GCC 4.7, and we're stuck on 4.4
+ *
+ * /
