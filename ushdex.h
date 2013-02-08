@@ -1,3 +1,6 @@
+#ifndef USHDEX_H
+#define USHDEX_H
+
 #include <boost/interprocess/managed_shared_memory.hpp>
 #include <boost/interprocess/allocators/allocator.hpp>
 
@@ -5,12 +8,13 @@
 #include <boost/interprocess/containers/pair.hpp>
 #include <boost/interprocess/containers/string.hpp>
 
-using namespace boost::interprocess;
+#include <ostream>
 
+using namespace boost::interprocess;
+using std::unique_ptr;
 
 // standard location in /dev/shm/MD.EXCHANGE
 const char SHM_NAME[] = "MD.EXCHANGE";
-
 
 // basic types
 typedef managed_shared_memory::segment_manager segment_manager_t;
@@ -31,6 +35,12 @@ struct Key{
         : rel_contract(rel_contract.c_str(), allocator),
           data(data.c_str(), allocator)
     {}
+
+    friend std::ostream & operator<< (std::ostream & o, const Key & self) {
+        o << "(" << self.rel_contract << "," << self.data << ")";
+        return o;
+    }
+
 };
 
 // necessary due to implementation of sets
@@ -60,3 +70,47 @@ typedef map<Key, long, key_less, LongValueTypeAllocator> LongDataExchange;
  * But this is only supported in GCC 4.7, and we're stuck on 4.4
  *
  */
+
+#include <iostream>
+using namespace std;
+
+struct ShmSession {
+
+    unique_ptr<managed_shared_memory> segment;
+    unique_ptr<void_allocator> allocator;
+
+    // these don't need to be deleted
+    DoubleDataExchange * ddex;
+    LongDataExchange * ldex;
+
+    ShmSession(bool recreate=false)
+    {
+        if(recreate) {
+            shared_memory_object::remove(SHM_NAME);
+
+            segment.reset(new managed_shared_memory(create_only, SHM_NAME, 65536));
+            allocator.reset(new void_allocator(segment->get_segment_manager()));
+ 
+            ddex = segment->construct<DoubleDataExchange>("DoubleDataExchange") (key_less(), *allocator);
+            ldex = segment->construct<LongDataExchange>("LongDataExchange") (key_less(), *allocator);
+        } else {
+            segment.reset(new managed_shared_memory(open_only, SHM_NAME));
+            allocator.reset(new void_allocator(segment->get_segment_manager()));
+            ddex = segment->find<DoubleDataExchange>("DoubleDataExchange").first;
+            ldex = segment->find<LongDataExchange>("LongDataExchange").first;
+        }
+    }
+
+
+    DoubleDataExchange & doubles() { return *ddex; }
+    LongDataExchange & longs() { return *ldex; }
+};
+
+struct SessionKey : public Key {
+
+    SessionKey(const std::string & rel_contract, const std::string & data, 
+               ShmSession & session)
+        : Key(rel_contract, data, *session.allocator)
+    {}
+};
+#endif

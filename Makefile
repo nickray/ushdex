@@ -4,9 +4,14 @@ LIBS := -lrt -lpthread
 
 all: *.o
     g++ -o create_shm create_shm.o $(LIBS)
-    #g++ -o write_shm write_shm.cc -lrt -lpthread
-    #g++ -o read_shm read_shm.cc -lrt -lpthread
+    g++ -o write_test write_test.o $(LIBS)
+    g++ -o read_test read_test.o $(LIBS)
 
 %.o: %.cc
-    g++ -std=c++0x -Wall -g -c $(input) -o $(output)
+    g++ -std=c++0x -Wall -g -Os -c $(input) -o $(output)
 
+.PHONY: clean
+
+clean:
+	rm -f *.o core
+	rm -f create_shm write_test read_test
