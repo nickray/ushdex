@@ -24,8 +24,8 @@ int main ()
     */
 
    // our keys for today
-   KeyType price_key("CL.F.GLOB.0", "last_traded_price", allocator);
-   KeyType update_key("CL.F.GLOB.0", "last_update", allocator);
+   Key price_key("CL.F.GLOB.0", "last_traded_price", allocator);
+   Key update_key("CL.F.GLOB.0", "last_update", allocator);
    
    // insert some data
    double_dex[price_key] = 9590.;
