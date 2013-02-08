@@ -1,15 +1,17 @@
+CXXFLAGS := -std=c++0x -Wall -Werror -g -Os
 LIBS := -lrt -lpthread
 
 .PHONY: all
 
 all: *.o
-    g++ -o create_shm create_shm.o $(LIBS)
-    g++ -o write_test write_test.o $(LIBS)
-    g++ -o read_test read_test.o $(LIBS)
-    g++ -o lookup lookup.o $(LIBS)
+	g++ -o create_shm create_shm.o $(LIBS)
+	g++ -o write_test write_test.o $(LIBS)
+	g++ -o read_test read_test.o $(LIBS)
+	g++ -o lookup lookup.o $(LIBS)
+	g++ -o list list.o $(LIBS)
 
 %.o: %.cc
-    g++ -std=c++0x -Wall -g -Os -c $(input) -o $(output)
+	g++ $(CXXFLAGS) -c $(input) -o $(output)
 
 .PHONY: clean
 
