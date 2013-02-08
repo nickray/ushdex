@@ -17,4 +17,4 @@ all: *.o
 
 clean:
 	rm -f *.o core
-	rm -f create_shm write_test read_test list lookup
+	rm -f clean_shm write_test read_test list lookup
