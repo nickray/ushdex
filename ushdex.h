@@ -37,7 +37,7 @@ struct Key{
     {}
 
     friend std::ostream & operator<< (std::ostream & o, const Key & self) {
-        o << "(" << self.rel_contract << "," << self.data << ")";
+        o << "('" << self.rel_contract << "', '" << self.data << "')";
         return o;
     }
 
