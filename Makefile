@@ -4,7 +4,7 @@ LIBS := -lrt -lpthread
 .PHONY: all
 
 all: *.o
-	g++ -o create_shm create_shm.o $(LIBS)
+	g++ -o clean_shm clean_shm.o $(LIBS)
 	g++ -o write_test write_test.o $(LIBS)
 	g++ -o read_test read_test.o $(LIBS)
 	g++ -o lookup lookup.o $(LIBS)
@@ -17,4 +17,4 @@ all: *.o
 
 clean:
 	rm -f *.o core
-	rm -f create_shm write_test read_test
+	rm -f create_shm write_test read_test list lookup
