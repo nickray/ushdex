@@ -22,6 +22,11 @@ int main ()
     reader.read(data);
     cout << "Read data for CL.F.GLOB.0:\n" << data << endl;
 
+    // what happens if keys doesn't exist?
+    Top1Reader ES_reader("ES.F.GLOB.0", session);
+    ES_reader.read(data);
+    cout << "Read data for ES.F.GLOB.0:\n" << data << endl;
+
     return 0;
 }
 

@@ -39,12 +39,12 @@ class Top1Writer {
         Top1Writer(const std::string & rel_contract, ShmSession & session)
             : rel_contract(rel_contract), session(session)
         {
-            p_ctr = &session.longs()[SessionKey("CL.F.GLOB.0", "Top1Data_ctr", session)];
-            p_timestamp = &session.longs()[SessionKey("CL.F.GLOB.0", "Top1Data_timestamp", session)];
-            p_bid1 = &session.doubles()[SessionKey("CL.F.GLOB.0", "Top1Data_bid1", session)];
-            p_ask1 = &session.doubles()[SessionKey("CL.F.GLOB.0", "Top1Data_ask1", session)];
-            p_bid1vol = &session.longs()[SessionKey("CL.F.GLOB.0", "Top1Data_bid1vol", session)];
-            p_ask1vol = &session.longs()[SessionKey("CL.F.GLOB.0", "Top1Data_ask1vol", session)];
+            p_ctr = &session.longs()[SessionKey(rel_contract, "Top1Data_ctr", session)];
+            p_timestamp = &session.longs()[SessionKey(rel_contract, "Top1Data_timestamp", session)];
+            p_bid1 = &session.doubles()[SessionKey(rel_contract, "Top1Data_bid1", session)];
+            p_ask1 = &session.doubles()[SessionKey(rel_contract, "Top1Data_ask1", session)];
+            p_bid1vol = &session.longs()[SessionKey(rel_contract, "Top1Data_bid1vol", session)];
+            p_ask1vol = &session.longs()[SessionKey(rel_contract, "Top1Data_ask1vol", session)];
         }
 
         void write(const Top1Data & data) {
@@ -81,12 +81,12 @@ class Top1Reader {
         Top1Reader(const std::string & rel_contract, ShmSession & session)
             : rel_contract(rel_contract), session(session)
         {
-            p_ctr = &session.longs()[SessionKey("CL.F.GLOB.0", "Top1Data_ctr", session)];
-            p_timestamp = &session.longs()[SessionKey("CL.F.GLOB.0", "Top1Data_timestamp", session)];
-            p_bid1 = &session.doubles()[SessionKey("CL.F.GLOB.0", "Top1Data_bid1", session)];
-            p_ask1 = &session.doubles()[SessionKey("CL.F.GLOB.0", "Top1Data_ask1", session)];
-            p_bid1vol = &session.longs()[SessionKey("CL.F.GLOB.0", "Top1Data_bid1vol", session)];
-            p_ask1vol = &session.longs()[SessionKey("CL.F.GLOB.0", "Top1Data_ask1vol", session)];
+            p_ctr = &session.longs()[SessionKey(rel_contract, "Top1Data_ctr", session)];
+            p_timestamp = &session.longs()[SessionKey(rel_contract, "Top1Data_timestamp", session)];
+            p_bid1 = &session.doubles()[SessionKey(rel_contract, "Top1Data_bid1", session)];
+            p_ask1 = &session.doubles()[SessionKey(rel_contract, "Top1Data_ask1", session)];
+            p_bid1vol = &session.longs()[SessionKey(rel_contract, "Top1Data_bid1vol", session)];
+            p_ask1vol = &session.longs()[SessionKey(rel_contract, "Top1Data_ask1vol", session)];
         }
 
         void read(Top1Data & data) {
