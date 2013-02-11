@@ -34,6 +34,7 @@ int main ()
 
     cout << "Wrote data for CL.F.GLOB.0:\n" << data << endl;
 
+    /*
     // throughput test, allow read_test to catch up
     sleep(1);
 
@@ -45,14 +46,18 @@ int main ()
         data.timestamp = data.bid1 = data.ask1 =
             data.bid1vol = data.ask1vol = i;
         si_writer.write(data);
-        /*
-        if(i & 1)
-           usleep(1);
-           */
         nanosleep(&ts, NULL);
         // remember that this system call itself probably
         // takes ~1 microsecond anyway...
     }
+    */
+
+    // higher TopData levels
+    TopData<20> data20;
+    TopWriter<20> writer20("FDAX.F.XEUR.0", session);
+    data20.timestamp = 0.;
+    data20.bid[0] = 0.;
+    writer20.write(data20);
 
     return 0;
 }
