@@ -1,6 +1,13 @@
 #include "ushdex.h"
 #include "feedstructs.h"
 
+typedef TopData<20> Top20Data;
+typedef std::pair<const Key, Top20Data> Top20ValueType;
+typedef boost::interprocess::allocator<Top20ValueType, segment_manager_t> Top20ValueTypeAllocator;
+typedef boost::interprocess::map<Key, Top20Data, key_less, Top20ValueTypeAllocator> Top20DataExchange;
+
+#include "nano.h"
+
 #include <iostream>
 #include <unistd.h>
 #include <time.h>
@@ -53,11 +60,84 @@ int main ()
     */
 
     // higher TopData levels
+    const long M(MICROS_PER_SECONDS);
+    long before, after;
+ 
+    // 0
+    TopData<0> data0;
+    TopWriter<0> writer0("FDAX.F.XEUR.0", session);
+    data0.timestamp = 0.;
+    data0.bid[0] = 0.;
+
+    TopReader<0> reader0("FDAX.F.XEUR.0", session);
+
+    before = nano();
+    for(long i = 0; i != M; ++i) {
+        //cout << i << endl;
+        writer0.write(data0);
+        reader0.read(data0);
+    }
+    after = nano();
+    cout << "Throughput for TopData<0>: " << float(after - before)/M << " nanoseconds." << endl;
+
+    // 5
+    TopData<5> data5;
+    TopWriter<5> writer5("FDAX.F.XEUR.0", session);
+    data5.timestamp = 0.;
+    data5.bid[0] = 0.;
+
+    TopReader<5> reader5("FDAX.F.XEUR.0", session);
+
+    before = nano();
+    for(long i = 0; i != M; ++i) {
+        //cout << i << endl;
+        writer5.write(data5);
+        reader5.read(data5);
+    }
+    after = nano();
+    cout << "Throughput for TopData<5>: " << float(after - before)/M << " nanoseconds." << endl;
+
+    // 20
     TopData<20> data20;
     TopWriter<20> writer20("FDAX.F.XEUR.0", session);
     data20.timestamp = 0.;
     data20.bid[0] = 0.;
-    writer20.write(data20);
+
+    TopReader<20> reader20("FDAX.F.XEUR.0", session);
+
+    before = nano();
+    for(long i = 0; i != M; ++i) {
+        //cout << i << endl;
+        writer20.write(data20);
+        reader20.read(data20);
+    }
+    after = nano();
+    cout << "Throughput for TopData<20>: " << float(after - before)/M << " nanoseconds." << endl;
+
+    Top20DataExchange * t20ex = 
+        session.segment->construct<Top20DataExchange>("Top20DataExchange") (key_less(), *(session.allocator));
+    SessionKey key("CL.F.GLOB.0", "Top20Data", session);
+    TopData<20> my_data((*t20ex)[key]);
+
+    before = nano();
+    TopData<20> my_data_out;
+    TopData<20> my_data_in;
+    long actual_ctr;
+    volatile long * ctr(&actual_ctr);
+    long prior_ctr, posterior_ctr;
+
+    for(long i = 0; i != M; ++i) {
+        store<long>(ctr, *ctr + 1);
+        my_data = my_data_out;
+        store<long>(ctr, *ctr + 1);
+        do {
+            prior_ctr = load<long>(ctr);
+            my_data_in = my_data;
+            posterior_ctr = load<long>(ctr);
+        } while ((posterior_ctr != prior_ctr) || (posterior_ctr & 1));
+    }
+    after = nano();
+    cout << "Throughput for TopDataExchange directly: " << float(after - before)/M << " nanoseconds." << endl;
 
     return 0;
 }

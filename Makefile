@@ -1,4 +1,5 @@
 CXXFLAGS := -std=c++0x -Wall -Werror -g -Os
+CXXFLAGS := -std=c++0x -Wall -g -Os
 LIBS := -lrt -lpthread
 
 .PHONY: all
