@@ -3,6 +3,8 @@
 
 #include "ushdex.h"
 
+const long N = 1000000;
+
 struct Top1Data {
 
     long timestamp;
