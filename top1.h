@@ -8,6 +8,7 @@ const long N = 1000000;
 
 struct Top1Data {
 
+    long id;
     long timestamp;
 
     double bid1, ask1;
@@ -107,6 +108,8 @@ class Top1Reader {
 
                 posterior_ctr = load<long>(p_ctr);
              } while ((posterior_ctr != prior_ctr) || (posterior_ctr & 1));
+
+            data.id = posterior_ctr >> 1;
 
             if(posterior_ctr != previous_ctr) {
                 previous_ctr = posterior_ctr;
