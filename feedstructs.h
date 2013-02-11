@@ -96,6 +96,7 @@ class Top1Writer {
 
         ShmSession & session;
 
+        long ctr;
         long *p_ctr;
 
         long *p_timestamp;
