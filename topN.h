@@ -144,6 +144,10 @@ class TopReader : public TopBase<N> {
             do {
                 prior_ctr = load<long>(TopBase<N>::p_ctr);
 
+                // a little optimisation
+                if(prior_ctr == previous_ctr)
+                    return false;
+
                 data.timestamp = *TopBase<N>::p_timestamp;
                 for(long i = 0; i != N; ++i) {
                     data.bid[i] = *TopBase<N>::p_bid[i];
