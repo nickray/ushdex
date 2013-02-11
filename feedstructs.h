@@ -91,7 +91,7 @@ class Top1Reader {
             p_ask1vol = &session.longs()[SessionKey(rel_contract, "Top1Data_ask1vol", session)];
         }
 
-        void read(Top1Data & data) {
+        bool read(Top1Data & data) {
             do {
                 prior_ctr = *p_ctr;
                 data.timestamp = *p_timestamp;
@@ -102,8 +102,22 @@ class Top1Reader {
 
                 asm volatile("lfence" ::: "memory");
                 posterior_ctr = *p_ctr;
-             } 
-                while ((posterior_ctr != prior_ctr) || (posterior_ctr & 1));
+             } while ((posterior_ctr != prior_ctr) || (posterior_ctr & 1));
+
+            if(posterior_ctr != previous_ctr) {
+                previous_ctr = posterior_ctr;
+                return true;
+            } else
+                return false;
+        }
+
+        void read_next(Top1Data & data) {
+            do {
+                if(read(data))
+                    return;
+                // supposedly, this helps... but perhaps it's just FUD ;-)
+                //asm volatile ("pause" ::: "memory");
+            } while (true);
         }
 
     protected:
@@ -111,6 +125,7 @@ class Top1Reader {
         ShmSession & session;
 
         volatile long *p_ctr; // check: should this be "volatile const long *"?
+        long previous_ctr;
         long prior_ctr, posterior_ctr;
 
         const long *p_timestamp;
