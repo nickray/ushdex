@@ -44,7 +44,8 @@ int main ()
         cout << data << endl;
     } while(data.timestamp < N);
 
-    cout << num_correct << ',' << num_read << ',' << N << endl;
+    cout << "Missed " << (N - num_read) << " out of " << N << " ticks, and parsed " << 
+        (num_read - num_correct) << " out of " << num_read << " incorrectly." << endl;
 
     return 0;
 }

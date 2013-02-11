@@ -41,7 +41,8 @@ int main ()
         data.timestamp = data.bid1 = data.ask1 =
             data.bid1vol = data.ask1vol = i;
         si_writer.write(data);
-        usleep(1);
+        if(i & 1)
+            usleep(1);
     }
 
     return 0;
