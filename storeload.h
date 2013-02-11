@@ -2,6 +2,8 @@
 #define STORELOAD_H
 
 /*
+ * Martin Thompson quote:
+ *
  * Since we are on x86_64, we can go with the following (we have one writer only!)
  * http://mechanical-sympathy.blogspot.ch/2011/07/
  *     memory-barriersfences.html?showComment=1334410306279#c5059759467872072653
