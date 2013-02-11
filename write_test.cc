@@ -33,6 +33,7 @@ int main ()
 
     cout << "Wrote data for CL.F.GLOB.0:\n" << data << endl;
 
+    // throughput test, allow read_test to catch up
     sleep(1);
 
     Top1Writer si_writer("SI.F.GLOB.0", session);

@@ -5,4 +5,8 @@ js = [int(l.split(',')[0]) for l in ls]
 diff = set(range(max(js) + 1)) - set(js)
 
 print ll
-print "First 100 missing:", diff
+if len(diff) > 100:
+    print "First 100 missing:", diff
+else:
+    print "Missing:", diff
+    
