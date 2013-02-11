@@ -2,7 +2,8 @@
 #include "feedstructs.h"
 
 #include <iostream>
-#include "unistd.h"
+#include <unistd.h>
+#include <time.h>
 using namespace std;
 
 int main ()
@@ -37,12 +38,20 @@ int main ()
     sleep(1);
 
     Top1Writer si_writer("SI.F.GLOB.0", session);
+    timespec ts;
+    ts.tv_sec = 0;
+    ts.tv_nsec = 1;
     for(long i = 1; i != N + 1; ++i) {
         data.timestamp = data.bid1 = data.ask1 =
             data.bid1vol = data.ask1vol = i;
         si_writer.write(data);
+        /*
         if(i & 1)
-            usleep(1);
+           usleep(1);
+           */
+        nanosleep(&ts, NULL);
+        // remember that this system call itself probably
+        // takes ~1 microsecond anyway...
     }
 
     return 0;

@@ -77,10 +77,11 @@ class Top1Writer {
             p_ask1 = &session.doubles()[SessionKey(rel_contract, "Top1Data::ask1", session)];
             p_bid1vol = &session.longs()[SessionKey(rel_contract, "Top1Data::bid1vol", session)];
             p_ask1vol = &session.longs()[SessionKey(rel_contract, "Top1Data::ask1vol", session)];
+            ctr = *p_ctr;
         }
 
         void write(const Top1Data & data) {
-            store<long>(p_ctr, load<long>(p_ctr) + 1);
+            store<long>(p_ctr, ++ctr);
             
             *p_timestamp = data.timestamp;
             *p_bid1 = data.bid1;
@@ -88,7 +89,7 @@ class Top1Writer {
             *p_bid1vol = data.bid1vol;
             *p_ask1vol = data.ask1vol;
 
-            store<long>(p_ctr, load<long>(p_ctr) + 1);
+            store<long>(p_ctr, ++ctr);
         }
 
     protected:
