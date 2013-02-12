@@ -1,10 +1,12 @@
 #include "ushdex.h"
 #include "feedstructs.h"
 
+/*
 typedef TopData<20> Top20Data;
 typedef std::pair<const Key, Top20Data> Top20ValueType;
 typedef boost::interprocess::allocator<Top20ValueType, segment_manager_t> Top20ValueTypeAllocator;
 typedef boost::interprocess::map<Key, Top20Data, key_less, Top20ValueTypeAllocator> Top20DataExchange;
+*/
 
 #include "nano.h"
 
@@ -114,10 +116,21 @@ int main ()
     after = nano();
     cout << "Throughput for TopData<20>: " << float(after - before)/M << " nanoseconds." << endl;
 
-    Top20DataExchange * t20ex = 
+    /*
+    Top20DataExchange * t20ex;
+    try {
         session.segment->construct<Top20DataExchange>("Top20DataExchange") (key_less(), *(session.allocator));
+        cout << "created" << endl;
+    } catch(boost::interprocess::interprocess_exception) {
+        session.segment->find<Top20DataExchange>("Top20DataExchange").first;
+        cout << "found" << endl;
+    }
+    session.segment->construct<Top20DataExchange>("Top20DataExchange") (key_less(), *(session.allocator));
+
     SessionKey key("CL.F.GLOB.0", "Top20Data", session);
+    cout << "a" << endl;
     TopData<20> my_data((*t20ex)[key]);
+    cout << "b" << endl;
 
     before = nano();
     TopData<20> my_data_out;
@@ -138,6 +151,7 @@ int main ()
     }
     after = nano();
     cout << "Throughput for TopDataExchange directly: " << float(after - before)/M << " nanoseconds." << endl;
+    */
 
     return 0;
 }
