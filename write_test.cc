@@ -125,7 +125,7 @@ int main ()
         session.segment->find<Top20DataExchange>("Top20DataExchange").first;
         cout << "found" << endl;
     }
-    session.segment->construct<Top20DataExchange>("Top20DataExchange") (key_less(), *(session.allocator));
+    //session.segment->construct<Top20DataExchange>("Top20DataExchange") (key_less(), *(session.allocator));
 
     SessionKey key("CL.F.GLOB.0", "Top20Data", session);
     cout << "a" << endl;
