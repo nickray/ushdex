@@ -66,12 +66,12 @@ int main ()
     long before, after;
  
     // 0
-    TopData<0> data0;
-    TopWriter<0> writer0("FDAX.F.XEUR.0", session);
+    TopData<1> data0;
+    TopWriter<1> writer0("FDAX.F.XEUR.0", session);
     data0.timestamp = 0.;
     data0.bid[0] = 0.;
 
-    TopReader<0> reader0("FDAX.F.XEUR.0", session);
+    TopReader<1> reader0("FDAX.F.XEUR.0", session);
 
     before = nano();
     for(long i = 0; i != M; ++i) {
@@ -80,7 +80,7 @@ int main ()
         reader0.read(data0);
     }
     after = nano();
-    cout << "Throughput for TopData<0>: " << float(after - before)/M << " nanoseconds." << endl;
+    cout << "Throughput for TopData<1>: " << float(after - before)/M << " nanoseconds." << endl;
 
     // 5
     TopData<5> data5;
