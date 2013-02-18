@@ -50,6 +50,15 @@ struct key_less : std::binary_function <Key, Key, bool>
       {return x.rel_contract < y.rel_contract || x.data < y.data;}
 };
 
+#if __GNUC_PREREQ(4, 7)
+/* template aliases are available */
+template <typename T> using ValueType = std::pair<const Key, T>;
+template<typename T> using ValueTypeAllocator = allocator<ValueType<T>, segment_manager_t>;
+template<class T> using DataExchange = map<Key, T, key_less, ValueTypeAllocator<T>>;
+
+typedef DataExchange<double> DoubleDataExchange;
+typedef DataExchange<long> LongDataExchange;
+#else
 // our two main types to exchange double and long data
 typedef std::pair<const Key, double> DoubleValueType;
 typedef allocator<DoubleValueType, segment_manager_t> DoubleValueTypeAllocator;
@@ -60,19 +69,28 @@ typedef allocator<LongValueType, segment_manager_t> LongValueTypeAllocator;
 typedef map<Key, long, key_less, LongValueTypeAllocator> LongDataExchange;
 
 /*
- * What we'd really like to do here is use template aliases:
+ * This is supposed to be the standard workaround,
+ * but it doesn't quite work!
  *
- * template <typename T>
- * using ValueType = std::pair<const Key, T>
- * template<class T> using ValueTypeAllocator = typedef allocator<ValueType, segment_manager_t>;
- * template<class T> using DataExchange = map<Key, T, key_less, ValueTypeAllocator>;
- *
- * But this is only supported in GCC 4.7, and we're stuck on 4.4
- *
- */
+template <typename T>
+struct ValueType {
+    typedef std::pair<const Key, T> type;
+};
 
-#include <iostream>
-using namespace std;
+template <typename T>
+struct ValueTypeAllocator {
+    allocator<ValueType::type, segment_manager_t> type;
+};
+
+template <typename T>
+struct DataExchange {
+    map<Key, T, key_less, ValueTypeAllocator::type> type;
+};
+
+typedef DataExchange<double>::type DoubleDataExchange;
+typedef DataExchange<long>::type LongDataExchange;
+*/
+#endif
 
 struct ShmSession {
 
