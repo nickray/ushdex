@@ -41,7 +41,7 @@ int main ()
             (data.timestamp == data.ask1vol)
           ) 
             ++num_correct;
-        cout << data << endl;
+        //cout << data << endl;
     } while(data.timestamp < N);
 
     cout << "Missed " << (N - num_read) << " out of " << N << " ticks, and parsed " << 

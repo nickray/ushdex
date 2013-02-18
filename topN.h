@@ -4,6 +4,7 @@
 #include "ushdex.h"
 #include "storeload.h"
 
+#include <array>
 #include <sstream>
 #include <string>
 using std::stringstream;
@@ -13,8 +14,14 @@ struct TopData {
 
     long id;
     long timestamp;
+    /*
     double bid[N], ask[N];
     long bidvol[N], askvol[N];
+    */
+    std::array<double, N> bid, ask;
+    std::array<long, N> bidvol, askvol;
+
+    TopData() : bid(), ask(), bidvol(), askvol() {}
 
     friend std::ostream & operator<< (std::ostream & o, const TopData<N> & self) {
         o << self.timestamp << ',';
@@ -98,8 +105,8 @@ class TopBase {
         // pointers
         volatile long *p_ctr;
         long *p_timestamp;
-        double *p_bid[N], *p_ask[N];
-        long *p_bidvol[N], *p_askvol[N];
+        std::array<double *, N> p_bid, p_ask;
+        std::array<long *, N> p_bidvol, p_askvol;
 
 };
 

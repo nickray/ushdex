@@ -4,7 +4,6 @@
 CXX := g++-4.7
 
 CXXFLAGS := -std=c++11 -Wall -Werror -g -Os
-CXXFLAGS := -std=c++11 -Wall -g -Os
 LIBS := -lrt -lpthread
 
 .PHONY: all

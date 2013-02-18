@@ -43,7 +43,6 @@ int main ()
 
     cout << "Wrote data for CL.F.GLOB.0:\n" << data << endl;
 
-    /*
     // throughput test, allow read_test to catch up
     sleep(1);
 
@@ -59,7 +58,6 @@ int main ()
         // remember that this system call itself probably
         // takes ~1 microsecond anyway...
     }
-    */
 
     // higher TopData levels
     const long M(MICROS_PER_SECONDS);
