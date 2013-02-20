@@ -9,6 +9,11 @@
 #include <string>
 using std::stringstream;
 
+char * hex_dump(const double d) {
+    static char buffer[32];
+    sprintf(buffer, "%a", d);
+    return buffer;
+}
 
 struct MetaData {
 

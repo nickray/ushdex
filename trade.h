@@ -12,10 +12,10 @@ struct TradeData : public MetaData {
     TradeData() : MetaData() {}
 
     friend std::ostream & operator<< (std::ostream & o, const TradeData & self) {
-        o << (MetaData&) self;
+        o << static_cast<const MetaData &>(self) << ',';
 
         o << self.last_traded_price << ',';
-        // to do: decided on full precision hex output
+        o << hex_dump(self.last_traded_price) << ',';
         o << self.last_traded_volume << ',';
         o << self.cum_traded_volume;
 

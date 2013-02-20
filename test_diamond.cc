@@ -16,6 +16,10 @@ int main ()
     ShmSession session;
 
     TradeData wr_data;
+    wr_data.last_traded_price = 9697.;
+    wr_data.last_traded_volume = 3;
+    wr_data.cum_traded_volume = 673; 
+
     TradeWriter tr_writer("CL.F.GLOB.0", session);
     tr_writer.write(wr_data);
     cout << wr_data << endl;
