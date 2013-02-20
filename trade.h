@@ -3,6 +3,8 @@
 
 #include "meta.h"
 
+const std::string TRADE_CLASS_PREFIX = "Trade::";
+
 struct TradeData : public MetaData {
 
     double last_traded_price;
@@ -55,9 +57,9 @@ class TradeWriter : public MetaWriter, TradeBase {
 
     public:
         TradeWriter(const std::string & rel_contract, ShmSession & session)
-            : MetaBase(rel_contract, "Trade::", session),
-              MetaWriter(rel_contract, "Trade::", session), 
-              TradeBase(rel_contract, "Trade::", session)
+            : MetaBase(rel_contract, TRADE_CLASS_PREFIX, session),
+              MetaWriter(rel_contract, TRADE_CLASS_PREFIX, session), 
+              TradeBase(rel_contract, TRADE_CLASS_PREFIX, session)
         {}
 
     protected:
@@ -75,9 +77,9 @@ class TradeReader : public MetaReader, TradeBase {
 
     public:
         TradeReader(const std::string & rel_contract, ShmSession & session)
-            : MetaBase(rel_contract, "Trade::", session),
-              MetaReader(rel_contract, "Trade::", session), 
-              TradeBase(rel_contract, "Trade::", session)
+            : MetaBase(rel_contract, TRADE_CLASS_PREFIX, session),
+              MetaReader(rel_contract, TRADE_CLASS_PREFIX, session), 
+              TradeBase(rel_contract, TRADE_CLASS_PREFIX, session)
         {}
 
     protected:
