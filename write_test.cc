@@ -43,6 +43,7 @@ int main ()
 
     cout << "Wrote data for CL.F.GLOB.0:\n" << data << endl;
 
+    /*
     // throughput test, allow read_test to catch up
     sleep(1);
 
@@ -58,6 +59,7 @@ int main ()
         // remember that this system call itself probably
         // takes ~1 microsecond anyway...
     }
+    */
 
     // higher TopData levels
     const long M(MICROS_PER_SECONDS);
@@ -75,7 +77,7 @@ int main ()
     for(long i = 0; i != M; ++i) {
         //cout << i << endl;
         writer0.write(data0);
-        reader0.read(data0);
+        reader0.read(&data0);
     }
     after = nano();
     cout << "Throughput for TopData<1>: " << float(after - before)/M << " nanoseconds." << endl;
@@ -92,7 +94,7 @@ int main ()
     for(long i = 0; i != M; ++i) {
         //cout << i << endl;
         writer5.write(data5);
-        reader5.read(data5);
+        reader5.read(&data5);
     }
     after = nano();
     cout << "Throughput for TopData<5>: " << float(after - before)/M << " nanoseconds." << endl;
@@ -109,7 +111,7 @@ int main ()
     for(long i = 0; i != M; ++i) {
         //cout << i << endl;
         writer20.write(data20);
-        reader20.read(data20);
+        reader20.read(&data20);
     }
     after = nano();
     cout << "Throughput for TopData<20>: " << float(after - before)/M << " nanoseconds." << endl;

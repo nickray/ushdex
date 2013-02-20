@@ -1,43 +1,36 @@
 #ifndef TOPN_H
 #define TOPN_H
 
-#include "ushdex.h"
-#include "storeload.h"
+#include "meta.h"
 
 #include <array>
-#include <sstream>
-#include <string>
-using std::stringstream;
 
 template <long N>
-struct TopData {
+constexpr std::string TopPrefix() {
+        stringstream stream;
+        stream << "Top" << N << "Data::";
+        return stream.str();
+}
 
-    long id;
-    long timestamp;
-    /*
-    double bid[N], ask[N];
-    long bidvol[N], askvol[N];
-    */
+template <long N>
+struct TopData : public MetaData {
+
     std::array<double, N> bid, ask;
     std::array<long, N> bidvol, askvol;
 
-    TopData() : bid(), ask(), bidvol(), askvol() {}
+    TopData() : MetaData(), bid(), ask(), bidvol(), askvol() {}
 
     friend std::ostream & operator<< (std::ostream & o, const TopData<N> & self) {
-        o << self.timestamp << ',';
+        o << static_cast<const MetaData &>(self) << ',';
 
-        char buffer[32];
         for(unsigned long i = 0; i != N - 1; ++i) {
             o <<
                 self.bid[i] << ',' <<
                 self.ask[i] << ',' <<
                 self.bidvol[i] << ',' <<
                 self.askvol[i] << ',';
-
-                sprintf(buffer, "%a", self.bid[i]);
-                o <<  buffer << ',';
-                sprintf(buffer, "%a", self.ask[i]);
-                o <<  buffer << ',';
+                o << hex_dump(self.bid[i]) << ',';
+                o << hex_dump(self.ask[i]) << ',';
         }
 
         o <<
@@ -45,11 +38,8 @@ struct TopData {
             self.ask[N - 1] << ',' <<
             self.bidvol[N - 1] << ',' <<
             self.askvol[N - 1] << ',';
-
-            sprintf(buffer, "%a", self.bid[N - 1]);
-            o <<  buffer << ',';
-            sprintf(buffer, "%a", self.ask[N - 1]);
-            o <<  buffer; // Note the missing comma
+            o << hex_dump(self.bid[N - 1]) << ',';
+            o << hex_dump(self.ask[N - 1]); // Note the missing comma
 
         return o;
     }
@@ -57,31 +47,12 @@ struct TopData {
 };
 
 template <long N>
-class TopBase {
+class TopBase : public virtual MetaBase {
     protected:
-        long * locate_long_entry(const std::string & name) {
-            stringstream stream; 
-            stream << prefix << name;
-            return &session.longs()[SessionKey(rel_contract, stream.str(), session)];
-        }
 
-        double * locate_double_entry(const std::string & name) {
-            stringstream stream;
-            stream << prefix << name;
-            return &session.doubles()[SessionKey(rel_contract, stream.str(), session)];
-        }
-
-        TopBase(const std::string & rel_contract, ShmSession & session)
-            : rel_contract(rel_contract), session(session)
+        TopBase(const std::string & rel_contract, const std::string & prefix, ShmSession & session)
+            : MetaBase(rel_contract, prefix, session)
         {
-            {
-                stringstream stream; stream << "Top" << N << "Data::";
-                prefix = stream.str();
-            }
-
-            p_ctr = locate_long_entry("ctr");
-            p_timestamp = locate_long_entry("timestamp");
-
             for(long i = 0; i != N; ++i) {
                 stringstream stream;
                 stream << (i + 1);
@@ -96,86 +67,57 @@ class TopBase {
             }
 
         }
-
-        // general variables
-        const std::string rel_contract;
-        ShmSession & session;
-        std::string prefix;
-
         // pointers
-        volatile long *p_ctr;
-        long *p_timestamp;
         std::array<double *, N> p_bid, p_ask;
         std::array<long *, N> p_bidvol, p_askvol;
 
 };
 
 template <long N>
-class TopWriter : public TopBase<N> {
+class TopWriter : public MetaWriter, TopBase<N> {
 
     public:
         TopWriter(const std::string & rel_contract, ShmSession & session)
-            : TopBase<N>(rel_contract, session), ctr(*TopBase<N>::p_ctr)
+            : MetaBase(rel_contract, TopPrefix<N>(), session),
+              MetaWriter(rel_contract, TopPrefix<N>(), session), 
+              TopBase<N>(rel_contract, TopPrefix<N>(), session)
         {}
 
-        void write(const TopData<N> & data) {
-            // One of the great joys of C++ template syntax ;-)
-            //
-            // A simple p_ctr lookup would not work, even though 
-            // it's completely obvious that it can't depend on N.
-            store<long>(TopBase<N>::p_ctr, ++ctr);
-            *TopBase<N>::p_timestamp = data.timestamp;
+        void write_derived(const MetaData * d) {
+            const TopData<N> & data(*static_cast<const TopData<N> *>(d));
+
             for(long i = 0; i != N; ++i) {
                 *TopBase<N>::p_bid[i] = data.bid[i];
                 *TopBase<N>::p_ask[i] = data.ask[i];
                 *TopBase<N>::p_bidvol[i] = data.bidvol[i];
                 *TopBase<N>::p_askvol[i] = data.askvol[i];
             }
-            store<long>(TopBase<N>::p_ctr, ++ctr);
         }
-
-    protected:
-        long ctr;
 };
 
 template <long N>
-class TopReader : public TopBase<N> {
+class TopReader : public MetaReader, TopBase<N> {
 
     public:
 
         TopReader(const std::string & rel_contract, ShmSession & session)
-            : TopBase<N>(rel_contract, session), previous_ctr(-1),
-              prior_ctr(-1), posterior_ctr(-1)
+            : MetaBase(rel_contract, TopPrefix<N>(), session),
+              MetaReader(rel_contract, TopPrefix<N>(), session), 
+              TopBase<N>(rel_contract, TopPrefix<N>(), session)
         {}
 
-        bool read(TopData<N> & data) {
-            do {
-                prior_ctr = load<long>(TopBase<N>::p_ctr);
+        void read_derived(MetaData * d) {
+            TopData<N> & data(*static_cast<TopData<N> *>(d));
 
-                // a little optimisation
-                if(prior_ctr == previous_ctr)
-                    return false;
-
-                data.timestamp = *TopBase<N>::p_timestamp;
-                for(long i = 0; i != N; ++i) {
-                    data.bid[i] = *TopBase<N>::p_bid[i];
-                    data.ask[i] = *TopBase<N>::p_ask[i];
-                    data.bidvol[i] = *TopBase<N>::p_bidvol[i];
-                    data.askvol[i] = *TopBase<N>::p_askvol[i];
-                }
-
-                posterior_ctr = load<long>(TopBase<N>::p_ctr);
-             } while ((posterior_ctr != prior_ctr) || (posterior_ctr & 1));
-
-            data.id = posterior_ctr >> 1;
-
-            if(posterior_ctr != previous_ctr) {
-                previous_ctr = posterior_ctr;
-                return true;
-            } else
-                return false;
+            for(long i = 0; i != N; ++i) {
+                data.bid[i] = *TopBase<N>::p_bid[i];
+                data.ask[i] = *TopBase<N>::p_ask[i];
+                data.bidvol[i] = *TopBase<N>::p_bidvol[i];
+                data.askvol[i] = *TopBase<N>::p_askvol[i];
+            }
         }
 
+        /*
         void read_next(Top1Data & data) {
             do {
                 if(read(data))
@@ -184,10 +126,8 @@ class TopReader : public TopBase<N> {
                 asm volatile ("pause" ::: "memory");
             } while (true);
         }
+        */
 
-    protected:
-        long previous_ctr;
-        long prior_ctr, posterior_ctr;
 };
 
 #endif
