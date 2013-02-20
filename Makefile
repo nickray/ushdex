@@ -3,7 +3,10 @@
 
 CXX := g++-4.7
 
-CXXFLAGS := -std=c++11 -Wall -Werror -g -Wfatal-errors #-Os
+# Some say that -Os is faster than -Os due to cache line
+# optimizations or whatever, but it seems -O3 is fater here
+CXXFLAGS := -std=c++11 -Wall -Werror -g -Wfatal-errors -O3
+
 LIBS := -lrt -lpthread
 
 .PHONY: all

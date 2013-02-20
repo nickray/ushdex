@@ -27,6 +27,18 @@ int main ()
 
     assert(rd_data == wr_data);
 
+    unsigned long iterations = 1e6;
+    unsigned long a, b;
+    a = nano();
+    for(unsigned long i = 0; i != iterations; ++i)
+    {   
+        tr_writer.write(wr_data);
+        tr_reader.read(&rd_data);
+    }   
+    b = nano();
+
+    cout << iterations << " iterations took " << double(b - a)/1e9 << "sec, so " << double(b - a)/iterations << "nsec per iteration" << endl;
+
     return 0;
 }
 
