@@ -1,7 +1,7 @@
-#ifndef TRADE_H
-#define TRADE_H
+#ifndef RW_TRADE_H
+#define RW_TRADE_H
 
-#include "meta.h"
+#include "rw_meta.h"
 
 const std::string TRADE_CLASS_PREFIX = "Trade::";
 
@@ -93,4 +93,4 @@ class TradeReader : public MetaReader, TradeBase {
 
 };
 
-#endif // TRADE_H
+#endif // RW_TRADE_H

@@ -1,5 +1,6 @@
 #include "ushdex.h"
-#include "feedstructs.h"
+#include "rw_topN.h"
+#include "top1.h"
 
 #include <iostream>
 using namespace std;

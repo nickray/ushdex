@@ -1,7 +1,7 @@
-#ifndef TOPN_H
-#define TOPN_H
+#ifndef RW_TOPN_H
+#define RW_TOPN_H
 
-#include "meta.h"
+#include "rw_meta.h"
 
 #include <array>
 
@@ -117,17 +117,7 @@ class TopReader : public MetaReader, TopBase<N> {
             }
         }
 
-        /*
-        void read_next(Top1Data & data) {
-            do {
-                if(read(data))
-                    return;
-                // supposedly, this helps... but perhaps it's just FUD ;-)
-                asm volatile ("pause" ::: "memory");
-            } while (true);
-        }
-        */
-
 };
 
-#endif
+#endif // RW_TOPN_H
+

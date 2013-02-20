@@ -1,5 +1,5 @@
-#ifndef META_H
-#define META_H
+#ifndef RW_META_H
+#define RW_META_H
 
 #include "ushdex.h"
 #include "storeload.h"
@@ -128,6 +128,15 @@ class MetaReader : public virtual MetaBase {
                 return false;
         }
 
+        void read_next(MetaData * data) {
+            do {
+                if(read(data))
+                    return;
+                // supposedly, this helps... but perhaps it's just FUD ;-)
+                asm volatile ("pause" ::: "memory");
+            } while (true);
+        }
+
     protected:
         virtual void read_derived(MetaData * data) = 0;
         long previous_ctr;
@@ -135,4 +144,4 @@ class MetaReader : public virtual MetaBase {
 
 };
 
-#endif // META_H
+#endif // RW_META_H

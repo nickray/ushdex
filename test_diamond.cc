@@ -1,7 +1,5 @@
 #include "ushdex.h"
-#include "feedstructs.h"
-
-#include "trade.h"
+#include "rw_trade.h"
 
 #include "nano.h"
 

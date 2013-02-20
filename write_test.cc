@@ -1,5 +1,6 @@
 #include "ushdex.h"
-#include "feedstructs.h"
+#include "top1.h"
+#include "rw_topN.h"
 
 /*
 typedef TopData<20> Top20Data;
