@@ -86,6 +86,15 @@ class MetaBase {
 
 };
 
+/*
+ * For future readers: Before MetaWriter/MetaReader were templated on their
+ * derived classes, write_derived/read_derived were pure virtual methods
+ * and called in write/read directly. By using the "curiously recurring 
+ * template pattern", this virtual table lookup can be avoided!
+ *
+ */
+
+template <class Derived>
 class MetaWriter : public virtual MetaBase {
 
     public:
@@ -106,17 +115,17 @@ class MetaWriter : public virtual MetaBase {
             *p_input_id = data.input_id;
             *p_output_id = (ctr + 1)/2;
 
-            write_derived(&data);
+            static_cast<Derived*>(this)->write_derived(&data);
 
             store<long>(p_ctr, ++ctr);
         }
 
     protected:
-        virtual void write_derived(const MetaData * data) = 0;
         long ctr;
 
 };
 
+template <class Derived>
 class MetaReader : public virtual MetaBase {
 
     public:
@@ -134,7 +143,7 @@ class MetaReader : public virtual MetaBase {
                 data.timestamp = *p_timestamp;
                 data.output_id = *p_output_id;
 
-                read_derived(&data);
+                static_cast<Derived*>(this)->read_derived(&data);
 
                 posterior_ctr = load<long>(p_ctr);
              } while ((posterior_ctr != prior_ctr) || (posterior_ctr & 1));
@@ -156,7 +165,6 @@ class MetaReader : public virtual MetaBase {
         }
 
     protected:
-        virtual void read_derived(MetaData * data) = 0;
         long previous_ctr;
         long prior_ctr, posterior_ctr;
 

@@ -62,7 +62,7 @@ class TradeBase : public virtual MetaBase {
         long * p_cum_volume;
 };
 
-class TradeWriter : public MetaWriter, TradeBase {
+class TradeWriter : public MetaWriter<TradeWriter>, TradeBase {
 
     public:
         TradeWriter(const std::string & rel_contract, ShmSession & session)
@@ -72,6 +72,7 @@ class TradeWriter : public MetaWriter, TradeBase {
         {}
 
     protected:
+        friend class MetaWriter<TradeWriter>;
         void write_derived(const MetaData * d) {
             const TradeData & data(*static_cast<const TradeData *>(d));
 
@@ -84,7 +85,7 @@ class TradeWriter : public MetaWriter, TradeBase {
 
 };
 
-class TradeReader : public MetaReader, TradeBase {
+class TradeReader : public MetaReader<TradeReader>, TradeBase {
 
     public:
         TradeReader(const std::string & rel_contract, ShmSession & session)
@@ -93,7 +94,9 @@ class TradeReader : public MetaReader, TradeBase {
               TradeBase(rel_contract, TRADE_DATA_PREFIX, session)
         {}
 
+
     protected:
+        friend class MetaReader<TradeReader>;
         void read_derived(MetaData * d) {
             TradeData & data(*static_cast<TradeData *>(d));
 
