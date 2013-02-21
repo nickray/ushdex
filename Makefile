@@ -5,7 +5,7 @@ CXX := g++-4.7
 
 # Some say that -Os is faster than -Os due to cache line
 # optimizations or whatever, but it seems -O3 is fater here
-CXXFLAGS := -std=c++11 -Wall -Werror -g -Wfatal-errors -O3 
+CXXFLAGS := -std=c++11 -Wall -Werror -g -Wfatal-errors -O3 -I/opt/boost_1_53_0
 
 LIBS := -lrt -lpthread
 
@@ -19,6 +19,7 @@ all: clean_shm.o write_test.o read_test.o lookup.o list.o test_diamond.o
 	$(CXX) -o list list.o $(LIBS)
 	$(CXX) -o test_diamond test_diamond.o $(LIBS)
 
+# The follwoing only works in Makepp
 #%.o: %.cc
 #	$(CXX) $(CXXFLAGS) -c $(input) -o $(output)
 
