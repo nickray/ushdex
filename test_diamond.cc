@@ -1,5 +1,6 @@
 #include "ushdex.h"
 #include "trade_rw.h"
+#include "red_rw.h"
 
 #include "nano.h"
 
@@ -34,9 +35,11 @@ int main ()
     unsigned long iterations = 1e6;
     unsigned long a, b;
     a = nano();
+    /*
     timespec ts;
     ts.tv_sec = 0;
     ts.tv_nsec = 0;
+    */
     for(unsigned long i = 0; i != iterations; ++i)
     {   
         tr_writer.write(wr_data);
@@ -47,6 +50,18 @@ int main ()
     b = nano();
 
     cout << iterations << " iterations took " << double(b - a)/1e9 << "sec, so " << double(b - a)/iterations << "nsec per iteration" << endl;
+
+    RedData data_out, data_in;
+    data_out.bid = 9061.3;
+    data_out.ask = 9061.6;
+    RedWriter w("XX.X.XXXX.0", session);
+    RedReader r("XX.X.XXXX.0", session);
+    w.write(data_out);
+    r.read(&data_in);
+
+    cout << data_out << endl << data_in << endl;
+    assert(data_out == data_in);
+    
 
     return 0;
 }

@@ -36,6 +36,13 @@ struct MetaData {
         return o; 
     }
 
+    bool operator==(const MetaData & other) const {
+        return (
+                ( input_id == other.input_id ) &&
+                ( timestamp == other.timestamp ) &&
+                ( output_id == other.output_id ) );
+        }
+ 
 };
 
 class MetaBase {

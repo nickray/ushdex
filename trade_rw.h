@@ -26,13 +26,10 @@ struct TradeData : public MetaData {
 
     bool operator==(const TradeData & other) const {
         return (
-                ( input_id == other.input_id ) and
-                ( timestamp == other.timestamp ) and
-                ( output_id == other.output_id ) and
-                ( last_traded_price == other.last_traded_price ) and
-                ( last_traded_volume == other.last_traded_volume ) and
-                ( cum_traded_volume == other.cum_traded_volume ) and
-                true );
+                MetaData::operator==(other) &&
+                ( last_traded_price == other.last_traded_price ) &&
+                ( last_traded_volume == other.last_traded_volume ) &&
+                ( cum_traded_volume == other.cum_traded_volume ) );
     }
 
 };
