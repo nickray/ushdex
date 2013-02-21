@@ -1,5 +1,5 @@
 #include "ushdex.h"
-#include "rw_trade.h"
+#include "trade_rw.h"
 
 #include "nano.h"
 
@@ -8,6 +8,8 @@
 #include <time.h>
 #include <cassert>
 using namespace std;
+
+#include "time.h"
 
 int main ()
 {
@@ -32,10 +34,15 @@ int main ()
     unsigned long iterations = 1e6;
     unsigned long a, b;
     a = nano();
+    timespec ts;
+    ts.tv_sec = 0;
+    ts.tv_nsec = 0;
     for(unsigned long i = 0; i != iterations; ++i)
     {   
         tr_writer.write(wr_data);
         tr_reader.read(&rd_data);
+        //nano();
+        //nanosleep(&ts, 0);
     }   
     b = nano();
 

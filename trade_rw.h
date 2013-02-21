@@ -1,7 +1,7 @@
 #ifndef RW_TRADE_H
 #define RW_TRADE_H
 
-#include "rw_meta.h"
+#include "meta_rw.h"
 
 const std::string TRADE_CLASS_PREFIX = "Trade::";
 

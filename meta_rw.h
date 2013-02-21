@@ -17,6 +17,16 @@ char * hex_dump(const double d) {
 
 struct MetaData {
 
+    /*
+     * to do: replace with this (discuss?)
+     *
+
+    long exch_id; // coming from FAST seq #
+    long exch_ts; // coming from UDP arrival at FCN
+    long prod_id; // currently ctr/2
+    long prod_ts; // set by interface (slow?)
+    */
+
     long input_id;
     long timestamp;
     long output_id;
