@@ -1,15 +1,21 @@
 
 # This is Makefile assumes Makepp
 
-CXX := g++-4.7
+CXX := /opt/g++-4.7
+
+LIBS := -lpthread -lrt
+
+.PHONY: all, clean, dev, rel
+
+dev: CXXFLAGS := -std=c++11 -Wall -Werror -g -Wfatal-errors -I/opt/boost_1_53_0
+dev: all
 
 # Some say that -Os is faster than -Os due to cache line
-# optimizations or whatever, but it seems -O3 is fater here
-CXXFLAGS := -std=c++11 -Wall -Werror -g -Wfatal-errors -O3 -I/opt/boost_1_53_0
-
-LIBS := -lrt -lpthread
-
-.PHONY: all
+# optimizations or whatever, but experimentally -O3 wins here
+rel: CXXFLAGS := -std=c++11 -O3 -I/opt/boost_1_53_0
+rel: all
+	find .  -maxdepth 1 -executable -type f -exec strip {} \;
+	#find .  -maxdepth 1 -executable -type f -exec /opt/upx --brute {} \;
 
 all: clean_shm.o write_test.o read_test.o lookup.o list.o test_diamond.o
 	$(CXX) -o clean_shm clean_shm.o $(LIBS)
@@ -19,13 +25,10 @@ all: clean_shm.o write_test.o read_test.o lookup.o list.o test_diamond.o
 	$(CXX) -o list list.o $(LIBS)
 	$(CXX) -o test_diamond test_diamond.o $(LIBS)
 
-# The follwoing only works in Makepp
-#%.o: %.cc
-#	$(CXX) $(CXXFLAGS) -c $(input) -o $(output)
-
-.PHONY: clean
+%.o: %.cc
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
 	rm -f *.o core
-	rm -f clean_shm write_test read_test list lookup test_diamond
+	find .  -maxdepth 1 -executable -type f -exec rm {} \;
 

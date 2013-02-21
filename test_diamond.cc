@@ -32,7 +32,7 @@ int main ()
 
     assert(rd_data == wr_data);
 
-    unsigned long iterations = 1e6;
+    unsigned long iterations = 1e7;
     unsigned long a, b;
     a = nano();
     /*
@@ -65,4 +65,3 @@ int main ()
 
     return 0;
 }
-
