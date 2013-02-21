@@ -78,7 +78,7 @@ int main ()
     for(long i = 0; i != M; ++i) {
         //cout << i << endl;
         writer0.write(data0);
-        reader0.read(&data0);
+        reader0.read(data0);
     }
     after = nano();
     cout << "Throughput for TopData<1>: " << float(after - before)/M << " nanoseconds." << endl;
@@ -95,7 +95,7 @@ int main ()
     for(long i = 0; i != M; ++i) {
         //cout << i << endl;
         writer5.write(data5);
-        reader5.read(&data5);
+        reader5.read(data5);
     }
     after = nano();
     cout << "Throughput for TopData<5>: " << float(after - before)/M << " nanoseconds." << endl;
@@ -112,7 +112,7 @@ int main ()
     for(long i = 0; i != M; ++i) {
         //cout << i << endl;
         writer20.write(data20);
-        reader20.read(&data20);
+        reader20.read(data20);
     }
     after = nano();
     cout << "Throughput for TopData<20>: " << float(after - before)/M << " nanoseconds." << endl;

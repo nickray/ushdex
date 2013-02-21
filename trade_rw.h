@@ -62,7 +62,7 @@ class TradeBase : public virtual MetaBase {
         long * p_cum_volume;
 };
 
-class TradeWriter : public MetaWriter<TradeWriter>, TradeBase {
+class TradeWriter : public MetaWriter<TradeWriter, TradeData>, TradeBase {
 
     public:
         TradeWriter(const std::string & rel_contract, ShmSession & session)
@@ -72,10 +72,8 @@ class TradeWriter : public MetaWriter<TradeWriter>, TradeBase {
         {}
 
     protected:
-        friend class MetaWriter<TradeWriter>;
-        void write_derived(const MetaData * d) {
-            const TradeData & data(*static_cast<const TradeData *>(d));
-
+        friend class MetaWriter<TradeWriter, TradeData>;
+        void write_derived(const TradeData & data) {
             *p_price = data.price;
             *p_volume = data.volume;
             *p_aggressor = data.aggressor;
@@ -85,7 +83,7 @@ class TradeWriter : public MetaWriter<TradeWriter>, TradeBase {
 
 };
 
-class TradeReader : public MetaReader<TradeReader>, TradeBase {
+class TradeReader : public MetaReader<TradeReader, TradeData>, TradeBase {
 
     public:
         TradeReader(const std::string & rel_contract, ShmSession & session)
@@ -96,10 +94,8 @@ class TradeReader : public MetaReader<TradeReader>, TradeBase {
 
 
     protected:
-        friend class MetaReader<TradeReader>;
-        void read_derived(MetaData * d) {
-            TradeData & data(*static_cast<TradeData *>(d));
-
+        friend class MetaReader<TradeReader, TradeData>;
+        void read_derived(TradeData & data) {
             data.price = *p_price;
             data.volume = *p_volume;
             data.aggressor = *p_aggressor;

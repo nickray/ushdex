@@ -74,19 +74,17 @@ class TopBase : public virtual MetaBase {
 };
 
 template <long N>
-class TopWriter : public MetaWriter< TopWriter<N> >, TopBase<N> {
+class TopWriter : public MetaWriter< TopWriter<N>, TopData<N> >, TopBase<N> {
 
     public:
         TopWriter(const std::string & rel_contract, ShmSession & session)
             : MetaBase(rel_contract, TOP_DATA_PREFIX<N>(), session),
-              MetaWriter< TopWriter<N> >(rel_contract, TOP_DATA_PREFIX<N>(), session), 
+              MetaWriter< TopWriter<N>, TopData<N> >(rel_contract, TOP_DATA_PREFIX<N>(), session), 
               TopBase<N>(rel_contract, TOP_DATA_PREFIX<N>(), session)
         {}
 
-        friend class MetaReader<TopWriter<N>>;
-        void write_derived(const MetaData * d) {
-            const TopData<N> & data(*static_cast<const TopData<N> *>(d));
-
+        friend class MetaReader< TopWriter<N>, TopData<N> >;
+        void write_derived(const TopData<N> & data) {
             for(long i = 0; i != N; ++i) {
                 *TopBase<N>::p_bids[i] = data.bids[i];
                 *TopBase<N>::p_asks[i] = data.asks[i];
@@ -97,20 +95,18 @@ class TopWriter : public MetaWriter< TopWriter<N> >, TopBase<N> {
 };
 
 template <long N>
-class TopReader : public MetaReader< TopReader<N> >, TopBase<N> {
+class TopReader : public MetaReader< TopReader<N>, TopData<N> >, TopBase<N> {
 
     public:
         TopReader(const std::string & rel_contract, ShmSession & session)
             : MetaBase(rel_contract, TOP_DATA_PREFIX<N>(), session),
-              MetaReader< TopReader<N> >(rel_contract, TOP_DATA_PREFIX<N>(), session), 
+              MetaReader< TopReader<N>, TopData<N> >(rel_contract, TOP_DATA_PREFIX<N>(), session), 
               TopBase<N>(rel_contract, TOP_DATA_PREFIX<N>(), session)
         {}
 
     protected:
-        friend class MetaReader<TopReader<N>>;
-        void read_derived(MetaData * d) {
-            TopData<N> & data(*static_cast<TopData<N> *>(d));
-
+        friend class MetaReader< TopReader<N>, TopData<N> >;
+        void read_derived(TopData<N> & data) {
             for(long i = 0; i != N; ++i) {
                 data.bids[i] = *TopBase<N>::p_bids[i];
                 data.asks[i] = *TopBase<N>::p_asks[i];

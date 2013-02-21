@@ -30,7 +30,7 @@ int main ()
 
     TradeData rd_data;
     TradeReader tr_reader("CL.F.GLOB.0", session);
-    tr_reader.read(&rd_data);
+    tr_reader.read(rd_data);
     cout << rd_data << endl;
 
     assert(rd_data == wr_data);
@@ -46,7 +46,7 @@ int main ()
     for(unsigned long i = 0; i != iterations; ++i)
     {   
         tr_writer.write(wr_data);
-        tr_reader.read(&rd_data);
+        tr_reader.read(rd_data);
         //nano();
         //nanosleep(&ts, 0);
     }   
@@ -61,7 +61,7 @@ int main ()
     RedWriter w("XX.X.XXXX.0", session);
     RedReader r("XX.X.XXXX.0", session);
     w.write(data_out);
-    r.read(&data_in);
+    r.read(data_in);
 
     cout << data_out << endl << data_in << endl;
     assert(data_out == data_in);

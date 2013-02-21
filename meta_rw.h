@@ -92,9 +92,12 @@ class MetaBase {
  * and called in write/read directly. By using the "curiously recurring 
  * template pattern", this virtual table lookup can be avoided!
  *
+ * Re. renaming write_derived simply as write, the problem is that
+ * MetaWriter::write is public while Writer::derived_write is protected.
+ *
  */
 
-template <class Derived>
+template <class Writer, class Data>
 class MetaWriter : public virtual MetaBase {
 
     public:
@@ -107,7 +110,7 @@ class MetaWriter : public virtual MetaBase {
                 store<long>(p_ctr, ++ctr);
         }
 
-        void write(const MetaData & data) {
+        void write(const Data & data) {
 
             store<long>(p_ctr, ++ctr);
 
@@ -115,7 +118,7 @@ class MetaWriter : public virtual MetaBase {
             *p_input_id = data.input_id;
             *p_output_id = (ctr + 1)/2;
 
-            static_cast<Derived*>(this)->write_derived(&data);
+            static_cast<Writer*>(this)->write_derived(data);
 
             store<long>(p_ctr, ++ctr);
         }
@@ -125,7 +128,7 @@ class MetaWriter : public virtual MetaBase {
 
 };
 
-template <class Derived>
+template <class Reader, class Data>
 class MetaReader : public virtual MetaBase {
 
     public:
@@ -134,8 +137,7 @@ class MetaReader : public virtual MetaBase {
             : MetaBase(rel_contract, prefix, session), previous_ctr(0)
         {}
 
-        bool read(MetaData * d) {
-            MetaData & data(*d);
+        bool read(Data & data) {
             do {
                 prior_ctr = load<long>(p_ctr);
 
@@ -143,7 +145,7 @@ class MetaReader : public virtual MetaBase {
                 data.timestamp = *p_timestamp;
                 data.output_id = *p_output_id;
 
-                static_cast<Derived*>(this)->read_derived(&data);
+                static_cast<Reader*>(this)->read_derived(data);
 
                 posterior_ctr = load<long>(p_ctr);
              } while ((posterior_ctr != prior_ctr) || (posterior_ctr & 1));
@@ -155,7 +157,7 @@ class MetaReader : public virtual MetaBase {
                 return false;
         }
 
-        void read_next(MetaData * data) {
+        void read_next(Data & data) {
             do {
                 if(read(data))
                     return;

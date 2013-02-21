@@ -46,7 +46,7 @@ class RedBase : public virtual MetaBase {
         double * p_ask;
 };
 
-class RedWriter : public MetaWriter<RedWriter>, RedBase {
+class RedWriter : public MetaWriter<RedWriter, RedData>, RedBase {
 
     public:
         RedWriter(const std::string & rel_contract, ShmSession & session)
@@ -56,17 +56,15 @@ class RedWriter : public MetaWriter<RedWriter>, RedBase {
         {}
 
     protected:
-        friend class MetaWriter<RedWriter>;
-        void write_derived(const MetaData * d) {
-            const RedData & data(*static_cast<const RedData *>(d));
-
+        friend class MetaWriter<RedWriter, RedData>;
+        void write_derived(const RedData & data) {
             *p_bid = data.bid;
             *p_ask = data.ask;
         }
 
 };
 
-class RedReader : public MetaReader<RedReader>, RedBase {
+class RedReader : public MetaReader<RedReader, RedData>, RedBase {
 
     public:
         RedReader(const std::string & rel_contract, ShmSession & session)
@@ -76,10 +74,8 @@ class RedReader : public MetaReader<RedReader>, RedBase {
         {}
 
     protected:
-        friend class MetaReader<RedReader>;
-        void read_derived(MetaData * d) {
-            RedData & data(*static_cast<RedData *>(d));
-
+        friend class MetaReader<RedReader, RedData>;
+        void read_derived(RedData & data) {
             data.bid = *p_bid;
             data.ask = *p_ask;
         }
