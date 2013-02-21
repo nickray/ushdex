@@ -11,7 +11,7 @@ LIBS := -lrt -lpthread
 
 .PHONY: all
 
-all: *.o
+all: clean_shm.o write_test.o read_test.o lookup.o list.o test_diamond.o
 	$(CXX) -o clean_shm clean_shm.o $(LIBS)
 	$(CXX) -o write_test write_test.o $(LIBS)
 	$(CXX) -o read_test read_test.o $(LIBS)
@@ -19,8 +19,8 @@ all: *.o
 	$(CXX) -o list list.o $(LIBS)
 	$(CXX) -o test_diamond test_diamond.o $(LIBS)
 
-%.o: %.cc
-	$(CXX) $(CXXFLAGS) -c $(input) -o $(output)
+#%.o: %.cc
+#	$(CXX) $(CXXFLAGS) -c $(input) -o $(output)
 
 .PHONY: clean
 
