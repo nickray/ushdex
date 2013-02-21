@@ -3,7 +3,7 @@
 
 #include "meta_rw.h"
 
-const std::string RED_CLASS_PREFIX = "Red::";
+const char * const RED_DATA_PREFIX = "RedData::";
 
 struct RedData : public MetaData {
 
@@ -16,8 +16,8 @@ struct RedData : public MetaData {
         o << static_cast<const MetaData &>(self) << ',';
 
         o << self.bid << ',';
-        o << self.ask << ',';
         o << hex_dump(self.bid) << ',';
+        o << self.ask << ',';
         o << hex_dump(self.ask);
 
         return o;
@@ -25,8 +25,8 @@ struct RedData : public MetaData {
 
     bool operator==(const RedData & other) const {
         return (
-                MetaData::operator==(other) and
-                ( bid == other.bid ) and
+                MetaData::operator==(other) &&
+                ( bid == other.bid ) &&
                 ( ask == other.ask ) );
     }
 
@@ -50,9 +50,9 @@ class RedWriter : public MetaWriter, RedBase {
 
     public:
         RedWriter(const std::string & rel_contract, ShmSession & session)
-            : MetaBase(rel_contract, RED_CLASS_PREFIX, session),
-              MetaWriter(rel_contract, RED_CLASS_PREFIX, session), 
-              RedBase(rel_contract, RED_CLASS_PREFIX, session)
+            : MetaBase(rel_contract, RED_DATA_PREFIX, session),
+              MetaWriter(rel_contract, RED_DATA_PREFIX, session), 
+              RedBase(rel_contract, RED_DATA_PREFIX, session)
         {}
 
     protected:
@@ -69,9 +69,9 @@ class RedReader : public MetaReader, RedBase {
 
     public:
         RedReader(const std::string & rel_contract, ShmSession & session)
-            : MetaBase(rel_contract, RED_CLASS_PREFIX, session),
-              MetaReader(rel_contract, RED_CLASS_PREFIX, session), 
-              RedBase(rel_contract, RED_CLASS_PREFIX, session)
+            : MetaBase(rel_contract, RED_DATA_PREFIX, session),
+              MetaReader(rel_contract, RED_DATA_PREFIX, session), 
+              RedBase(rel_contract, RED_DATA_PREFIX, session)
         {}
 
     protected:

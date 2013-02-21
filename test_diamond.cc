@@ -17,9 +17,12 @@ int main ()
     ShmSession session;
 
     TradeData wr_data;
-    wr_data.last_traded_price = 9697.;
-    wr_data.last_traded_volume = 3;
-    wr_data.cum_traded_volume = 673; 
+    wr_data.timestamp = micro(); 
+    wr_data.price = 9697.;
+    wr_data.volume = 3;
+    wr_data.aggressor = +1;
+    wr_data.type = 0;
+    wr_data.cum_volume = 673; 
 
     TradeWriter tr_writer("CL.F.GLOB.0", session);
     tr_writer.write(wr_data);
@@ -52,6 +55,7 @@ int main ()
     cout << iterations << " iterations took " << double(b - a)/1e9 << "sec, so " << double(b - a)/iterations << "nsec per iteration" << endl;
 
     RedData data_out, data_in;
+    data_out.timestamp = micro(); 
     data_out.bid = 9061.3;
     data_out.ask = 9061.6;
     RedWriter w("XX.X.XXXX.0", session);

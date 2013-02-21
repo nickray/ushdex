@@ -14,7 +14,7 @@ using namespace boost::interprocess;
 using std::unique_ptr;
 
 // standard location in /dev/shm/MD.EXCHANGE
-const char SHM_NAME[] = "MD.EXCHANGE";
+const char * SHM_NAME = "MD.EXCHANGE";
 
 // basic types
 typedef managed_shared_memory::segment_manager segment_manager_t;
@@ -118,7 +118,6 @@ struct ShmSession {
             ldex = segment->find<LongDataExchange>("LongDataExchange").first;
         }
     }
-
 
     DoubleDataExchange & doubles() { return *ddex; }
     LongDataExchange & longs() { return *ldex; }

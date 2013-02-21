@@ -15,33 +15,32 @@ char * hex_dump(const double d) {
     return buffer;
 }
 
+const char * readable(const long t)
+{
+    static char now_buffer[32 + 1]; // + 1 for '\0'
+    enum { million = 1000000 };
+    long seconds(t/million);
+    strftime(now_buffer, 32, "%y%m%d.%H%M%S.", localtime(&seconds));
+    snprintf(&now_buffer[14], 32 - 14, "%06ld", t % million);
+    return now_buffer;
+}
+
+
 struct MetaData {
 
-    /*
-     * to do: replace with this (discuss?)
-     *
-
-    long exch_id; // coming from FAST seq #
-    long exch_ts; // coming from UDP arrival at FCN
-    long prod_id; // currently ctr/2
-    long prod_ts; // set by interface (slow?)
-    */
-
-    long input_id;
-    long timestamp;
-    long output_id;
+    long timestamp; // UDP packet arrival at FCN
+    long input_id;  // FAST sequence number
+    long output_id; // ctr/2
 
     friend std::ostream & operator<< (std::ostream & o, const MetaData & self) {
-        o << self.input_id << ',' << self.timestamp << ',' << self.output_id;
+        o << readable(self.timestamp) << ',' << self.input_id << ',' << self.output_id;
         return o; 
     }
 
     bool operator==(const MetaData & other) const {
-        return (
-                ( input_id == other.input_id ) &&
-                ( timestamp == other.timestamp ) &&
-                ( output_id == other.output_id ) );
-        }
+        return (( timestamp == other.timestamp ) &&
+                ( input_id == other.input_id ));
+    }
  
 };
 
@@ -69,8 +68,8 @@ class MetaBase {
             // But this is an implemenation detail, let's not hardcode it!
             
             p_ctr = locate_long_entry("ctr");
-            p_input_id = locate_long_entry("input_id");
             p_timestamp = locate_long_entry("timestamp");
+            p_input_id = locate_long_entry("input_id");
             p_output_id = locate_long_entry("output_id");
         }
 
@@ -81,8 +80,8 @@ class MetaBase {
         
         // pointers
         volatile long *p_ctr;
-        long *p_input_id;
         long *p_timestamp;
+        long *p_input_id;
         long *p_output_id;
 
 };
@@ -93,15 +92,19 @@ class MetaWriter : public virtual MetaBase {
 
         MetaWriter(const std::string & rel_contract, const std::string & prefix, ShmSession & session) 
             : MetaBase(rel_contract, prefix, session), ctr(*MetaBase::p_ctr)
-        {}
+        {
+            // Recover from potentially crashed previous writer
+            if(ctr & 1)
+                store<long>(p_ctr, ++ctr);
+        }
 
         void write(const MetaData & data) {
 
             store<long>(p_ctr, ++ctr);
 
-            *p_input_id = data.input_id;
             *p_timestamp = data.timestamp;
-            *p_output_id = data.output_id;
+            *p_input_id = data.input_id;
+            *p_output_id = (ctr + 1)/2;
 
             write_derived(&data);
 
@@ -135,8 +138,6 @@ class MetaReader : public virtual MetaBase {
 
                 posterior_ctr = load<long>(p_ctr);
              } while ((posterior_ctr != prior_ctr) || (posterior_ctr & 1));
-
-            //data.id = posterior_ctr >> 1;
 
             if(posterior_ctr != previous_ctr) {
                 previous_ctr = posterior_ctr;

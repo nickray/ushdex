@@ -70,7 +70,7 @@ int main ()
     TopData<1> data0;
     TopWriter<1> writer0("FDAX.F.XEUR.0", session);
     data0.timestamp = 0.;
-    data0.bid[0] = 0.;
+    data0.bids[0] = 0.;
 
     TopReader<1> reader0("FDAX.F.XEUR.0", session);
 
@@ -87,7 +87,7 @@ int main ()
     TopData<5> data5;
     TopWriter<5> writer5("FDAX.F.XEUR.0", session);
     data5.timestamp = 0.;
-    data5.bid[0] = 0.;
+    data5.bids[0] = 0.;
 
     TopReader<5> reader5("FDAX.F.XEUR.0", session);
 
@@ -104,7 +104,7 @@ int main ()
     TopData<20> data20;
     TopWriter<20> writer20("FDAX.F.XEUR.0", session);
     data20.timestamp = 0.;
-    data20.bid[0] = 0.;
+    data20.bids[0] = 0.;
 
     TopReader<20> reader20("FDAX.F.XEUR.0", session);
 

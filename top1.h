@@ -4,6 +4,11 @@
 #include "ushdex.h"
 #include "storeload.h"
 
+/*
+ * Old crufty legacy class -- use TopData<1> or RedData in production!
+ *
+ */
+
 const long N = 1000000;
 
 struct Top1Data {
