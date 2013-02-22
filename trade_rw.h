@@ -68,7 +68,7 @@ class TradeWriter : public MetaWriter<TradeWriter, TradeData>, TradeBase {
     public:
         TradeWriter(const std::string & rel_contract, ShmSession & session)
             : MetaBase(rel_contract, TRADE_DATA_PREFIX, session),
-              MetaWriter(rel_contract, TRADE_DATA_PREFIX, session), 
+              MetaWriter<TradeWriter, TradeData>(rel_contract, TRADE_DATA_PREFIX, session), 
               TradeBase(rel_contract, TRADE_DATA_PREFIX, session)
         {}
 
@@ -89,7 +89,7 @@ class TradeReader : public MetaReader<TradeReader, TradeData>, TradeBase {
     public:
         TradeReader(const std::string & rel_contract, ShmSession & session)
             : MetaBase(rel_contract, TRADE_DATA_PREFIX, session),
-              MetaReader(rel_contract, TRADE_DATA_PREFIX, session), 
+              MetaReader<TradeReader, TradeData>(rel_contract, TRADE_DATA_PREFIX, session), 
               TradeBase(rel_contract, TRADE_DATA_PREFIX, session)
         {}
 

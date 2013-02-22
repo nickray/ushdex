@@ -9,7 +9,7 @@
 namespace ush {
 
 template <long N>
-constexpr std::string TOP_DATA_PREFIX() {
+std::string TOP_DATA_PREFIX() {
         std::stringstream stream;
         stream << "Top" << N << "Data::";
         return stream.str();

@@ -6,9 +6,9 @@
 namespace ush {
 
 enum { 
-    billion  = int(__builtin_pow(10, 9)),
-    million  = int(__builtin_pow(10, 6)),
-    thousand = int(__builtin_pow(10, 3)),
+    billion  = 1000000000,
+    million  = 1000000,
+    thousand = 1000,
 };
 
 static inline long nano()

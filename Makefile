@@ -1,18 +1,16 @@
 
-# This is Makefile assumes Makepp
-
-CXX := /opt/g++-4.7
+CXX := g++
 
 LIBS := -lpthread -lrt
 
 .PHONY: all clean dev rel
 
-dev: CXXFLAGS := -std=c++11 -Wall -Werror -g -Wfatal-errors -I/opt/boost_1_53_0
+dev: CXXFLAGS := -std=c++0x -Wall -Werror -g -Wfatal-errors -I/opt/boost_1_53_0
 dev: all
 
 # Some say that -Os is faster than -Os due to cache line
 # optimizations or whatever, but experimentally -O3 wins here
-rel: CXXFLAGS := -std=c++11 -O3 -I/opt/boost_1_53_0
+rel: CXXFLAGS := -std=c++0x -O3 -I/opt/boost_1_53_0
 rel: all
 	#find .  -maxdepth 1 -executable -type f -exec strip {} \;
 	#find .  -maxdepth 1 -executable -type f -exec /opt/upx --brute {} \;
