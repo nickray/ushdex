@@ -35,6 +35,7 @@ struct RedData : public MetaData {
 
 class RedBase : public virtual MetaBase {
     protected:
+
         RedBase(const std::string & rel_contract, const std::string & prefix, ShmSession & session)
             : MetaBase(rel_contract, prefix, session)
         {

@@ -1,5 +1,3 @@
-#include "nano.h"
-
 #include "session.h"
 #include "top1.h"
 #include "topN_rw.h"
@@ -64,7 +62,7 @@ int main ()
     */
 
     // higher TopData levels
-    const long M(MICROS_PER_SECONDS);
+    const long M(million);
     long before, after;
  
     // 0

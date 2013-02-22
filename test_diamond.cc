@@ -1,5 +1,3 @@
-#include "nano.h"
-
 #include "session.h"
 #include "trade_rw.h"
 #include "red_rw.h"

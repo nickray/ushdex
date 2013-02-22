@@ -1,7 +1,31 @@
 #ifndef USH_UTIL_H
 #define USH_UTIL_H
 
+#include <ctime>
+
 namespace ush {
+
+enum { 
+    billion  = int(__builtin_pow(10, 9)),
+    million  = int(__builtin_pow(10, 6)),
+    thousand = int(__builtin_pow(10, 3)),
+};
+
+static inline long nano()
+{
+    struct timespec tp;
+    if (clock_gettime(CLOCK_REALTIME, &tp) == -1) 
+        return -1;
+    return tp.tv_sec*billion + tp.tv_nsec;
+}
+
+static inline long micro()
+{
+    struct timespec tp;
+    if (clock_gettime(CLOCK_REALTIME, &tp) == -1) 
+        return -1;
+    return tp.tv_sec*million + tp.tv_nsec/thousand;
+}
 
 char * hex_dump(const double d) {
     static char buffer[32];
