@@ -24,7 +24,7 @@ typedef allocator<char, segment_manager_t> char_allocator;
 typedef basic_string<char, std::char_traits<char>, char_allocator> String;
 
 // basic key type, e.g. ("CL.F.GLOB.0", "last_traded_price")
-struct Key{
+struct Key {
 
     String rel_contract;
     String data;
@@ -43,11 +43,14 @@ struct Key{
 };
 
 // necessary due to implementation of sets
-struct key_less : std::binary_function <Key, Key, bool>
-{
-  bool operator() (const Key& x, const Key& y) const
-      {return (x.rel_contract < y.rel_contract) || 
-          ((x.rel_contract == y.rel_contract) && (x.data < y.data));}
+struct key_less : std::binary_function <Key, Key, bool> {
+  bool operator() (const Key& x, const Key& y) const {
+      if(x.rel_contract < y.rel_contract)
+          return true;
+      if(x.rel_contract == y.rel_contract)
+          return x.data < y.data;
+      return false;
+  }
 };
 
 #if __GNUC_PREREQ(4, 7)
