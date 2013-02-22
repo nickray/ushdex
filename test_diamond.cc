@@ -37,22 +37,15 @@ int main ()
 
     unsigned long iterations = 1e7;
     unsigned long a, b;
-    a = nano();
-    /*
-    timespec ts;
-    ts.tv_sec = 0;
-    ts.tv_nsec = 0;
-    */
+    b = nano();
     for(unsigned long i = 0; i != iterations; ++i)
     {   
         tr_writer.write(wr_data);
         tr_reader.read(rd_data);
-        //nano();
-        //nanosleep(&ts, 0);
     }   
-    b = nano();
+    a = nano();
 
-    cout << iterations << " iterations took " << double(b - a)/1e9 << "sec, so " << double(b - a)/iterations << "nsec per iteration" << endl;
+    cout << iterations << " iterations took " << double(a - b)/1e9 << "sec, so " << double(a - b)/iterations << "nsec per iteration" << endl;
 
     RedData data_out, data_in;
     data_out.timestamp = micro(); 

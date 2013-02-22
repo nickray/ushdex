@@ -1,5 +1,5 @@
-#ifndef RW_RED_H
-#define RW_RED_H
+#ifndef RED_RW_H
+#define RED_RW_H
 
 #include "meta_rw.h"
 
@@ -19,15 +19,14 @@ struct RedData : public MetaData {
         o << hex_dump(self.bid) << ',';
         o << self.ask << ',';
         o << hex_dump(self.ask);
-
         return o;
     }
 
     bool operator==(const RedData & other) const {
-        return (
-                MetaData::operator==(other) &&
-                ( bid == other.bid ) &&
-                ( ask == other.ask ) );
+        return (MetaData::operator==(other) &&
+               ( bid == other.bid ) &&
+               ( ask == other.ask ) &&
+                true);
     }
 
 };
@@ -39,11 +38,13 @@ class RedBase : public virtual MetaBase {
         {
             p_bid = locate_double_entry("bid");
             p_ask = locate_double_entry("ask");
+
         }
 
         // pointers
         double * p_bid;
         double * p_ask;
+
 };
 
 class RedWriter : public MetaWriter<RedWriter, RedData>, RedBase {
@@ -82,4 +83,4 @@ class RedReader : public MetaReader<RedReader, RedData>, RedBase {
 
 };
 
-#endif // RW_RED_H
+#endif // RED_RW_H
