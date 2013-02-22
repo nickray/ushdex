@@ -46,7 +46,8 @@ struct Key{
 struct key_less : std::binary_function <Key, Key, bool>
 {
   bool operator() (const Key& x, const Key& y) const
-      {return x.rel_contract < y.rel_contract || x.data < y.data;}
+      {return (x.rel_contract < y.rel_contract) || 
+          ((x.rel_contract == y.rel_contract) && (x.data < y.data));}
 };
 
 #if __GNUC_PREREQ(4, 7)
