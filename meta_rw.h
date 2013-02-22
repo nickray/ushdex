@@ -15,8 +15,7 @@ char * hex_dump(const double d) {
     return buffer;
 }
 
-const char * readable(const long t)
-{
+const char * readable(const long t) {
     static char now_buffer[32 + 1]; // + 1 for '\0'
     enum { million = 1000000 };
     long seconds(t/million);
@@ -24,7 +23,6 @@ const char * readable(const long t)
     snprintf(&now_buffer[14], 32 - 14, "%06ld", t % million);
     return now_buffer;
 }
-
 
 struct MetaData {
 
@@ -37,6 +35,8 @@ struct MetaData {
         return o; 
     }
 
+    // do not compare output_id here, because typically
+    // one compares data before and after passing shm
     bool operator==(const MetaData & other) const {
         return (( timestamp == other.timestamp ) &&
                 ( input_id == other.input_id ));
@@ -65,7 +65,7 @@ class MetaBase {
         {
             // Remark: In the current implementation,
             // we (currently) have output_id == ctr/2.
-            // But this is an implemenation detail, let's not hardcode it!
+            // But this is an implementation detail, let's not hardcode it!
             
             p_ctr = locate_long_entry("ctr");
             p_timestamp = locate_long_entry("timestamp");
@@ -141,8 +141,8 @@ class MetaReader : public virtual MetaBase {
             do {
                 prior_ctr = load<long>(p_ctr);
 
-                data.input_id = *p_input_id;
                 data.timestamp = *p_timestamp;
+                data.input_id = *p_input_id;
                 data.output_id = *p_output_id;
 
                 static_cast<Reader*>(this)->read_derived(data);
