@@ -14,7 +14,7 @@ dev: all
 # optimizations or whatever, but experimentally -O3 wins here
 rel: CXXFLAGS := -std=c++11 -O3 -I/opt/boost_1_53_0
 rel: all
-	find .  -maxdepth 1 -executable -type f -exec strip {} \;
+	#find .  -maxdepth 1 -executable -type f -exec strip {} \;
 	#find .  -maxdepth 1 -executable -type f -exec /opt/upx --brute {} \;
 
 all: trade_rw.h red_rw.h clean_shm.o write_test.o read_test.o lookup.o list.o test_diamond.o

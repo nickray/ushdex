@@ -8,14 +8,9 @@ namespace ush {
 // standard location /dev/shm/SHM_NAME
 const char * SHM_NAME = "MD.EXCHANGE";
 
+class SessionKey;
+
 struct ShmSession {
-
-    unique_ptr<managed_shared_memory> segment;
-    unique_ptr<void_allocator> allocator;
-
-    // these don't need to be deleted
-    DoubleDataExchange * ddex;
-    LongDataExchange * ldex;
 
     ShmSession(bool recreate=false)
     {
@@ -37,6 +32,16 @@ struct ShmSession {
 
     DoubleDataExchange & doubles() { return *ddex; }
     LongDataExchange & longs() { return *ldex; }
+
+    unique_ptr<managed_shared_memory> segment;
+    unique_ptr<void_allocator> allocator;
+
+    protected:
+
+        // these don't need to be deleted
+        DoubleDataExchange * ddex;
+        LongDataExchange * ldex;
+
 };
 
 struct SessionKey : public Key {

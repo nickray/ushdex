@@ -27,22 +27,20 @@ struct TopData : public MetaData {
         o << static_cast<const MetaData &>(self) << ',';
 
         for(unsigned long i = 0; i != N - 1; ++i) {
-            o <<
-                self.bid[i] << ',' <<
-                self.ask[i] << ',' <<
-                self.bidvol[i] << ',' <<
-                self.askvol[i] << ',';
-                o << hex_dump(self.bid[i]) << ',';
-                o << hex_dump(self.ask[i]) << ',';
+            o << self.bids[i] << ',';
+            o << hex_dump(self.bids[i]) << ',';
+            o << self.asks[i] << ',';
+            o << hex_dump(self.asks[i]) << ',';
+            o << self.bidvols[i] << ',';
+            o << self.askvols[i] << ',';
         }
 
-        o <<
-            self.bid[N - 1] << ',' <<
-            self.ask[N - 1] << ',' <<
-            self.bidvol[N - 1] << ',' <<
-            self.askvol[N - 1] << ',';
-            o << hex_dump(self.bid[N - 1]) << ',';
-            o << hex_dump(self.ask[N - 1]); // Note the missing comma
+        o << self.bids[N - 1] << ',';
+        o << hex_dump(self.bids[N - 1]) << ',';
+        o << self.asks[N - 1] << ',';
+        o << hex_dump(self.asks[N - 1]) << ',';
+        o << self.bidvols[N - 1] << ',';
+        o << self.askvols[N - 1]; // Note the missing comma
 
         return o;
     }

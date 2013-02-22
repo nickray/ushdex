@@ -1,6 +1,5 @@
 #include "session.h"
 #include "topN_rw.h"
-#include "top1.h"
 using namespace ush;
 
 #include <iostream>
@@ -18,29 +17,30 @@ int main ()
     cout << update_key << ": " << session.longs()[update_key] << endl;
     
     // synchronized reading
-    Top1Data data;
-    Top1Reader reader("CL.F.GLOB.0", session);
+    TopData<1> data;
+    TopReader<1> reader("CL.F.GLOB.0", session);
 
     reader.read(data);
     cout << "Read data for CL.F.GLOB.0:\n" << data << endl;
 
     // what happens if keys doesn't exist?
-    Top1Reader ES_reader("ES.F.GLOB.0", session);
+    TopReader<1> ES_reader("ES.F.GLOB.0", session);
     ES_reader.read(data);
     cout << "Read data for ES.F.GLOB.0:\n" << data << endl;
 
-    // throughput test, check output with verify.py
-    Top1Reader si_reader("SI.F.GLOB.0", session);
+    // throughput test
+    TopReader<1> si_reader("SI.F.GLOB.0", session);
+    int N(million);
     long num_read(0);
     long num_correct(0);
     do {
         si_reader.read_next(data);
         ++num_read;
         if(
-            (data.timestamp == data.bid1) and
-            (data.timestamp == data.ask1) and
-            (data.timestamp == data.bid1vol) and
-            (data.timestamp == data.ask1vol)
+            (data.timestamp == data.bids[0]) and
+            (data.timestamp == data.asks[0]) and
+            (data.timestamp == data.bidvols[0]) and
+            (data.timestamp == data.askvols[0])
           ) 
             ++num_correct;
         //cout << data << endl;

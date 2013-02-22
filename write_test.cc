@@ -1,19 +1,16 @@
 #include "session.h"
-#include "top1.h"
 #include "topN_rw.h"
 using namespace ush;
-
-/*
-typedef TopData<20> Top20Data;
-typedef std::pair<const Key, Top20Data> Top20ValueType;
-typedef boost::interprocess::allocator<Top20ValueType, segment_manager_t> Top20ValueTypeAllocator;
-typedef boost::interprocess::map<Key, Top20Data, key_less, Top20ValueTypeAllocator> Top20DataExchange;
-*/
 
 #include <iostream>
 #include <unistd.h>
 #include <time.h>
 using namespace std;
+
+typedef TopData<20> Top20Data;
+typedef std::pair<const Key, Top20Data> Top20ValueType;
+typedef boost::interprocess::allocator<Top20ValueType, segment_manager_t> Top20ValueTypeAllocator;
+typedef boost::interprocess::map<Key, Top20Data, key_less, Top20ValueTypeAllocator> Top20DataExchange;
 
 int main ()
 {
@@ -30,15 +27,15 @@ int main ()
     cout << update_key << ": " << session.longs()[update_key] << endl;
 
     // synchronized writing
-    Top1Data data;
+    TopData<1> data;
 
     data.timestamp = 1360258008084400896;
-    data.bid1 = 9611.;
-    data.ask1 = 9612.;
-    data.bid1vol = 43;
-    data.ask1vol = 19;
+    data.bids[0] = 9611.;
+    data.asks[0] = 9612.;
+    data.bidvols[0] = 43;
+    data.askvols[0] = 19;
 
-    Top1Writer writer("CL.F.GLOB.0", session);
+    TopWriter<1> writer("CL.F.GLOB.0", session);
     writer.write(data);
 
     cout << "Wrote data for CL.F.GLOB.0:\n" << data << endl;
@@ -47,17 +44,17 @@ int main ()
     // throughput test, allow read_test to catch up
     sleep(1);
 
-    Top1Writer si_writer("SI.F.GLOB.0", session);
+    TopWriter<1> si_writer("SI.F.GLOB.0", session);
     timespec ts;
     ts.tv_sec = 0;
     ts.tv_nsec = 1;
-    for(long i = 1; i != N + 1; ++i) {
-        data.timestamp = data.bid1 = data.ask1 =
-            data.bid1vol = data.ask1vol = i;
+    for(long i = 1; i != million + 1; ++i) {
+        data.timestamp = data.bids[0] = data.asks[0] =
+            data.bidvols[0] = data.askvols[0] = i;
         si_writer.write(data);
         nanosleep(&ts, NULL);
         // remember that this system call itself probably
-        // takes ~1 microsecond anyway...
+        // takes ~57 microseconds anyway...
     }
     */
 
@@ -66,18 +63,17 @@ int main ()
     long before, after;
  
     // 0
-    TopData<1> data0;
-    TopWriter<1> writer0("FDAX.F.XEUR.0", session);
-    data0.timestamp = 0.;
-    data0.bids[0] = 0.;
+    TopData<1> data1;
+    TopWriter<1> writer1("FDAX.F.XEUR.0", session);
+    data1.timestamp = 0.;
+    data1.bids[0] = 0.;
 
-    TopReader<1> reader0("FDAX.F.XEUR.0", session);
+    TopReader<1> reader1("FDAX.F.XEUR.0", session);
 
     before = nano();
     for(long i = 0; i != M; ++i) {
-        //cout << i << endl;
-        writer0.write(data0);
-        reader0.read(data0);
+        writer1.write(data1);
+        reader1.read(data1);
     }
     after = nano();
     cout << "Throughput for TopData<1>: " << float(after - before)/M << " nanoseconds." << endl;
@@ -92,7 +88,6 @@ int main ()
 
     before = nano();
     for(long i = 0; i != M; ++i) {
-        //cout << i << endl;
         writer5.write(data5);
         reader5.read(data5);
     }
@@ -109,7 +104,6 @@ int main ()
 
     before = nano();
     for(long i = 0; i != M; ++i) {
-        //cout << i << endl;
         writer20.write(data20);
         reader20.read(data20);
     }
@@ -117,6 +111,7 @@ int main ()
     cout << "Throughput for TopData<20>: " << float(after - before)/M << " nanoseconds." << endl;
 
     /*
+    // variant with direct memcopying
     Top20DataExchange * t20ex;
     try {
         session.segment->construct<Top20DataExchange>("Top20DataExchange") (key_less(), *(session.allocator));
