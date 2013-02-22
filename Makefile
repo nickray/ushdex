@@ -36,5 +36,6 @@ red_rw.h: red.vars
 
 clean:
 	rm -f *.o core
-	find .  -maxdepth 1 -executable -type f -exec rm {} \;
+	#find .  -maxdepth 1 -executable -type f -exec rm {} \;
+	rm -f clean_shm write_test read_test lookup list test_diamond
 
