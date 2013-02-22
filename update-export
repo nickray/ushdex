@@ -1,2 +1,5 @@
 #!/bin/bash
 
+mkdir -p export/include/ush
+cp *.h export/include/ush
+

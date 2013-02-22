@@ -1,28 +1,12 @@
-#ifndef RW_META_H
-#define RW_META_H
+#ifndef META_RW_H
+#define META_RW_H
 
-#include "ushdex.h"
-#include "storeload.h"
+#include "session.h"
+#include "util.h"
 
-// Are the next three lines needed?!
 #include <sstream>
-#include <string>
-using std::stringstream;
 
-char * hex_dump(const double d) {
-    static char buffer[32];
-    sprintf(buffer, "%a", d);
-    return buffer;
-}
-
-const char * readable(const long t) {
-    static char now_buffer[32 + 1]; // + 1 for '\0'
-    enum { million = 1000000 };
-    long seconds(t/million);
-    strftime(now_buffer, 32, "%y%m%d.%H%M%S.", localtime(&seconds));
-    snprintf(&now_buffer[14], 32 - 14, "%06ld", t % million);
-    return now_buffer;
-}
+namespace ush {
 
 struct MetaData {
 
@@ -49,13 +33,13 @@ class MetaBase {
     protected:
 
         long * locate_long_entry(const std::string & name) {
-            stringstream stream; 
+            std::stringstream stream; 
             stream << prefix << name;
             return &session.longs()[SessionKey(rel_contract, stream.str(), session)];
         }
 
         double * locate_double_entry(const std::string & name) {
-            stringstream stream;
+            std::stringstream stream;
             stream << prefix << name;
             return &session.doubles()[SessionKey(rel_contract, stream.str(), session)];
         }
@@ -172,4 +156,6 @@ class MetaReader : public virtual MetaBase {
 
 };
 
-#endif // RW_META_H
+} // namespace ush
+
+#endif // META_RW_H

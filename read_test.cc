@@ -1,6 +1,7 @@
-#include "ushdex.h"
+#include "session.h"
 #include "topN_rw.h"
 #include "top1.h"
+using namespace ush;
 
 #include <iostream>
 using namespace std;

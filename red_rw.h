@@ -3,6 +3,8 @@
 
 #include "meta_rw.h"
 
+namespace ush {
+
 const char * const RED_DATA_PREFIX = "RedData::";
 
 struct RedData : public MetaData {
@@ -82,5 +84,7 @@ class RedReader : public MetaReader<RedReader, RedData>, RedBase {
         }
 
 };
+
+} // namespace ush
 
 #endif // RED_RW_H

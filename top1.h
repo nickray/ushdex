@@ -1,13 +1,15 @@
 #ifndef TOP1_H
 #define TOP1_H
 
-#include "ushdex.h"
-#include "storeload.h"
-
 /*
  * Old crufty legacy class -- use TopData<1> or RedData in production!
  *
  */
+
+#include "session.h"
+#include "util.h"
+
+namespace ush {
 
 const long N = 1000000;
 
@@ -146,5 +148,7 @@ class Top1Reader {
         const long *p_bid1vol, *p_ask1vol;
 
 };
+
+}
 
 #endif

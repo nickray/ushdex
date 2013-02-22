@@ -1,5 +1,22 @@
-#ifndef STORELOAD_H
-#define STORELOAD_H
+#ifndef USH_UTIL_H
+#define USH_UTIL_H
+
+namespace ush {
+
+char * hex_dump(const double d) {
+    static char buffer[32];
+    sprintf(buffer, "%a", d);
+    return buffer;
+}
+
+const char * readable(const long t) {
+    static char now_buffer[32 + 1]; // + 1 for '\0'
+    enum { million = 1000000 };
+    long seconds(t/million);
+    strftime(now_buffer, 32, "%y%m%d.%H%M%S.", localtime(&seconds));
+    snprintf(&now_buffer[14], 32 - 14, "%06ld", t % million);
+    return now_buffer;
+}
 
 /*
  * Martin Thompson quote:
@@ -33,4 +50,6 @@ static inline void store(volatile T * ptr, T value) {
     *ptr = value;
 }
 
-#endif
+} // namespace ush
+
+#endif // USH_UTIL_H

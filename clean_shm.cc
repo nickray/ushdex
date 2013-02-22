@@ -1,11 +1,11 @@
-#include "ushdex.h"
+#include "session.h"
 
 #include <iostream>
 using namespace std;
 
 int main ()
 {
-   ShmSession session(true);
+    ush::ShmSession session(true);
 
    return 0;
 }

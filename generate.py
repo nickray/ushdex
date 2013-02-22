@@ -10,6 +10,8 @@ template = """\
 
 #include "meta_rw.h"
 
+namespace ush {
+
 const char * const {{DT}}_DATA_PREFIX = "{{Dt}}Data::";
 
 struct {{Dt}}Data : public MetaData {
@@ -103,7 +105,10 @@ class {{Dt}}Reader : public MetaReader<{{Dt}}Reader, {{Dt}}Data>, {{Dt}}Base {
 
 };
 
-#endif // {{DT}}_RW_H"""
+} // namespace ush
+
+#endif // {{DT}}_RW_H
+"""
 
 def generate(datatype):
     definition = yaml.load(open(datatype + '.vars')).split()

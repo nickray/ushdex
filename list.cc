@@ -1,11 +1,11 @@
-#include "ushdex.h"
+#include "session.h"
 
 #include <iostream>
-using namespace std;
+using std::cout;
 
 int main ()
 {
-    ShmSession session;
+    ush::ShmSession session;
 
     cout << "::DoubleDataExchange\n";
     for (auto it = session.doubles().begin(); it != session.doubles().end(); ++it)

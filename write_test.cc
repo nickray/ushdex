@@ -1,6 +1,9 @@
-#include "ushdex.h"
+#include "nano.h"
+
+#include "session.h"
 #include "top1.h"
 #include "topN_rw.h"
+using namespace ush;
 
 /*
 typedef TopData<20> Top20Data;
@@ -8,8 +11,6 @@ typedef std::pair<const Key, Top20Data> Top20ValueType;
 typedef boost::interprocess::allocator<Top20ValueType, segment_manager_t> Top20ValueTypeAllocator;
 typedef boost::interprocess::map<Key, Top20Data, key_less, Top20ValueTypeAllocator> Top20DataExchange;
 */
-
-#include "nano.h"
 
 #include <iostream>
 #include <unistd.h>

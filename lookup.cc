@@ -1,4 +1,4 @@
-#include "ushdex.h"
+#include "session.h"
 
 #include <iostream>
 using namespace std;
@@ -10,9 +10,9 @@ int main (int argc, char **argv)
         return 1;
     }
 
-    ShmSession session;
+    ush::ShmSession session;
 
-    SessionKey key(argv[1], argv[2], session);
+    ush::SessionKey key(argv[1], argv[2], session);
 
     if (session.doubles().count(key))
         cout << key << " in session.doubles: " << session.doubles().at(key) << endl;

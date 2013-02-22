@@ -1,13 +1,16 @@
-#ifndef RW_TOPN_H
-#define RW_TOPN_H
+#ifndef TOPN_RW_H
+#define TOPN_RW_H
 
 #include "meta_rw.h"
 
 #include <array>
+#include <sstream>
+
+namespace ush {
 
 template <long N>
 constexpr std::string TOP_DATA_PREFIX() {
-        stringstream stream;
+        std::stringstream stream;
         stream << "Top" << N << "Data::";
         return stream.str();
 }
@@ -54,7 +57,7 @@ class TopBase : public virtual MetaBase {
             : MetaBase(rel_contract, prefix, session)
         {
             for(long i = 0; i != N; ++i) {
-                stringstream stream;
+                std::stringstream stream;
                 stream << (i + 1);
                 auto postfix1 = stream.str();
                 stream << "vol";
@@ -117,5 +120,6 @@ class TopReader : public MetaReader< TopReader<N>, TopData<N> >, TopBase<N> {
 
 };
 
-#endif // RW_TOPN_H
+} // namespace ush
 
+#endif // TOPN_RW_H

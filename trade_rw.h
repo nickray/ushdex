@@ -3,6 +3,8 @@
 
 #include "meta_rw.h"
 
+namespace ush {
+
 const char * const TRADE_DATA_PREFIX = "TradeData::";
 
 struct TradeData : public MetaData {
@@ -102,5 +104,7 @@ class TradeReader : public MetaReader<TradeReader, TradeData>, TradeBase {
         }
 
 };
+
+} // namespace ush
 
 #endif // TRADE_RW_H
