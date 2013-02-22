@@ -35,7 +35,6 @@ struct RedData : public MetaData {
 
 class RedBase : public virtual MetaBase {
     protected:
-
         RedBase(const std::string & rel_contract, const std::string & prefix, ShmSession & session)
             : MetaBase(rel_contract, prefix, session)
         {
@@ -55,7 +54,7 @@ class RedWriter : public MetaWriter<RedWriter, RedData>, RedBase {
     public:
         RedWriter(const std::string & rel_contract, ShmSession & session)
             : MetaBase(rel_contract, RED_DATA_PREFIX, session),
-              MetaWriter(rel_contract, RED_DATA_PREFIX, session), 
+              MetaWriter<RedWriter, RedData>(rel_contract, RED_DATA_PREFIX, session), 
               RedBase(rel_contract, RED_DATA_PREFIX, session)
         {}
 
@@ -73,7 +72,7 @@ class RedReader : public MetaReader<RedReader, RedData>, RedBase {
     public:
         RedReader(const std::string & rel_contract, ShmSession & session)
             : MetaBase(rel_contract, RED_DATA_PREFIX, session),
-              MetaReader(rel_contract, RED_DATA_PREFIX, session), 
+              MetaReader<RedReader, RedData>(rel_contract, RED_DATA_PREFIX, session), 
               RedBase(rel_contract, RED_DATA_PREFIX, session)
         {}
 

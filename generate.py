@@ -72,7 +72,7 @@ class {{Dt}}Writer : public MetaWriter<{{Dt}}Writer, {{Dt}}Data>, {{Dt}}Base {
     public:
         {{Dt}}Writer(const std::string & rel_contract, ShmSession & session)
             : MetaBase(rel_contract, {{DT}}_DATA_PREFIX, session),
-              MetaWriter(rel_contract, {{DT}}_DATA_PREFIX, session), 
+              MetaWriter<{{Dt}}Writer, {{Dt}}Data>(rel_contract, {{DT}}_DATA_PREFIX, session), 
               {{Dt}}Base(rel_contract, {{DT}}_DATA_PREFIX, session)
         {}
 
@@ -91,7 +91,7 @@ class {{Dt}}Reader : public MetaReader<{{Dt}}Reader, {{Dt}}Data>, {{Dt}}Base {
     public:
         {{Dt}}Reader(const std::string & rel_contract, ShmSession & session)
             : MetaBase(rel_contract, {{DT}}_DATA_PREFIX, session),
-              MetaReader(rel_contract, {{DT}}_DATA_PREFIX, session), 
+              MetaReader<{{Dt}}Reader, {{Dt}}Data>(rel_contract, {{DT}}_DATA_PREFIX, session), 
               {{Dt}}Base(rel_contract, {{DT}}_DATA_PREFIX, session)
         {}
 
