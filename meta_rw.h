@@ -70,7 +70,7 @@ class MetaBase {
 
 };
 
-ShmSession MetaBase::session{};
+ShmSession MetaBase::session;
 
 /*
  * For future readers: Before MetaWriter/MetaReader were templated on their

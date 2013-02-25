@@ -60,7 +60,7 @@ class {{Dt}}Base : public virtual MetaBase {
         {
 {% for dol, name in members %}\
             p_{{name}} = locate_{{dol}}_entry("{{name}}");
-{% endfor %}
+{% endfor %}\
         }
 
         // pointers

@@ -52,7 +52,6 @@ class TradeBase : public virtual MetaBase {
             p_aggressor = locate_long_entry("aggressor");
             p_type = locate_long_entry("type");
             p_cum_volume = locate_long_entry("cum_volume");
-
         }
 
         // pointers

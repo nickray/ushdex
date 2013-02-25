@@ -41,7 +41,6 @@ class RedBase : public virtual MetaBase {
         {
             p_bid = locate_double_entry("bid");
             p_ask = locate_double_entry("ask");
-
         }
 
         // pointers
