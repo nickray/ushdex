@@ -42,9 +42,10 @@ struct TradeData : public MetaData {
 };
 
 class TradeBase : public virtual MetaBase {
+
     protected:
-        TradeBase(const std::string & rel_contract, const std::string & prefix, ShmSession & session)
-            : MetaBase(rel_contract, prefix, session)
+        TradeBase(const std::string & rel_contract, const std::string & prefix)
+            : MetaBase(rel_contract, prefix)
         {
             p_price = locate_double_entry("price");
             p_volume = locate_long_entry("volume");
@@ -66,10 +67,10 @@ class TradeBase : public virtual MetaBase {
 class TradeWriter : public MetaWriter<TradeWriter, TradeData>, TradeBase {
 
     public:
-        TradeWriter(const std::string & rel_contract, ShmSession & session)
-            : MetaBase(rel_contract, TRADE_DATA_PREFIX, session),
-              MetaWriter<TradeWriter, TradeData>(rel_contract, TRADE_DATA_PREFIX, session), 
-              TradeBase(rel_contract, TRADE_DATA_PREFIX, session)
+        TradeWriter(const std::string & rel_contract)
+            : MetaBase(rel_contract, TRADE_DATA_PREFIX),
+              MetaWriter<TradeWriter, TradeData>(rel_contract, TRADE_DATA_PREFIX),
+              TradeBase(rel_contract, TRADE_DATA_PREFIX)
         {}
 
     protected:
@@ -87,10 +88,10 @@ class TradeWriter : public MetaWriter<TradeWriter, TradeData>, TradeBase {
 class TradeReader : public MetaReader<TradeReader, TradeData>, TradeBase {
 
     public:
-        TradeReader(const std::string & rel_contract, ShmSession & session)
-            : MetaBase(rel_contract, TRADE_DATA_PREFIX, session),
-              MetaReader<TradeReader, TradeData>(rel_contract, TRADE_DATA_PREFIX, session), 
-              TradeBase(rel_contract, TRADE_DATA_PREFIX, session)
+        TradeReader(const std::string & rel_contract)
+            : MetaBase(rel_contract, TRADE_DATA_PREFIX),
+              MetaReader<TradeReader, TradeData>(rel_contract, TRADE_DATA_PREFIX), 
+              TradeBase(rel_contract, TRADE_DATA_PREFIX)
         {}
 
     protected:

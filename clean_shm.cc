@@ -1,12 +1,11 @@
 #include "session.h"
 
 #include <iostream>
-using namespace std;
 
 int main ()
 {
     ush::ShmSession session(true);
-
-   return 0;
+    std::cout << "created /dev/shm/" << ush::SHM_NAME << " of size " << ush::SHM_SIZE << std::endl;
+    return 0;
 }
 

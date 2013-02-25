@@ -1,4 +1,4 @@
-#include "session.h"
+//#include "session.h"
 #include "trade_rw.h"
 #include "red_rw.h"
 using namespace ush;
@@ -13,8 +13,6 @@ using namespace std;
 
 int main ()
 {
-    ShmSession session;
-
     TradeData wr_data;
     wr_data.timestamp = micro(); 
     wr_data.price = 9697.;
@@ -23,12 +21,12 @@ int main ()
     wr_data.type = 0;
     wr_data.cum_volume = 673; 
 
-    TradeWriter tr_writer("CL.F.GLOB.0", session);
+    TradeWriter tr_writer("CL.F.GLOB.0");
     tr_writer.write(wr_data);
     cout << wr_data << endl;
 
     TradeData rd_data;
-    TradeReader tr_reader("CL.F.GLOB.0", session);
+    TradeReader tr_reader("CL.F.GLOB.0");
     tr_reader.read(rd_data);
     cout << rd_data << endl;
 
@@ -50,14 +48,13 @@ int main ()
     data_out.timestamp = micro(); 
     data_out.bid = 9061.3;
     data_out.ask = 9061.6;
-    RedWriter w("XX.X.XXXX.0", session);
-    RedReader r("XX.X.XXXX.0", session);
+    RedWriter w("XX.X.XXXX.0");
+    RedReader r("XX.X.XXXX.0");
     w.write(data_out);
     r.read(data_in);
 
     cout << data_out << endl << data_in << endl;
     assert(data_out == data_in);
     
-
     return 0;
 }

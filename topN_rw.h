@@ -9,6 +9,9 @@
 namespace ush {
 
 template <long N>
+#if __GNUC_PREREQ(4, 7)
+constexpr
+#endif
 std::string TOP_DATA_PREFIX() {
         std::stringstream stream;
         stream << "Top" << N << "Data::";
@@ -51,8 +54,8 @@ template <long N>
 class TopBase : public virtual MetaBase {
     protected:
 
-        TopBase(const std::string & rel_contract, const std::string & prefix, ShmSession & session)
-            : MetaBase(rel_contract, prefix, session)
+        TopBase(const std::string & rel_contract, const std::string & prefix)
+            : MetaBase(rel_contract, prefix)
         {
             for(long i = 0; i != N; ++i) {
                 std::stringstream stream;
@@ -78,10 +81,10 @@ template <long N>
 class TopWriter : public MetaWriter< TopWriter<N>, TopData<N> >, TopBase<N> {
 
     public:
-        TopWriter(const std::string & rel_contract, ShmSession & session)
-            : MetaBase(rel_contract, TOP_DATA_PREFIX<N>(), session),
-              MetaWriter< TopWriter<N>, TopData<N> >(rel_contract, TOP_DATA_PREFIX<N>(), session), 
-              TopBase<N>(rel_contract, TOP_DATA_PREFIX<N>(), session)
+        TopWriter(const std::string & rel_contract)
+            : MetaBase(rel_contract, TOP_DATA_PREFIX<N>()),
+              MetaWriter< TopWriter<N>, TopData<N> >(rel_contract, TOP_DATA_PREFIX<N>()), 
+              TopBase<N>(rel_contract, TOP_DATA_PREFIX<N>())
         {}
 
         friend class MetaReader< TopWriter<N>, TopData<N> >;
@@ -99,10 +102,10 @@ template <long N>
 class TopReader : public MetaReader< TopReader<N>, TopData<N> >, TopBase<N> {
 
     public:
-        TopReader(const std::string & rel_contract, ShmSession & session)
-            : MetaBase(rel_contract, TOP_DATA_PREFIX<N>(), session),
-              MetaReader< TopReader<N>, TopData<N> >(rel_contract, TOP_DATA_PREFIX<N>(), session), 
-              TopBase<N>(rel_contract, TOP_DATA_PREFIX<N>(), session)
+        TopReader(const std::string & rel_contract)
+            : MetaBase(rel_contract, TOP_DATA_PREFIX<N>()),
+              MetaReader< TopReader<N>, TopData<N> >(rel_contract, TOP_DATA_PREFIX<N>()), 
+              TopBase<N>(rel_contract, TOP_DATA_PREFIX<N>())
         {}
 
     protected:

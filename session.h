@@ -7,6 +7,7 @@ namespace ush {
 
 // standard location /dev/shm/SHM_NAME
 const char * SHM_NAME = "MD.EXCHANGE";
+const std::size_t SHM_SIZE = 65536;
 
 class SessionKey;
 
@@ -17,11 +18,11 @@ struct ShmSession {
         if(recreate) {
             shared_memory_object::remove(SHM_NAME);
 
-            segment.reset(new managed_shared_memory(create_only, SHM_NAME, 65536));
+            segment.reset(new managed_shared_memory(create_only, SHM_NAME, SHM_SIZE));
             allocator.reset(new void_allocator(segment->get_segment_manager()));
  
-            ddex = segment->construct<DoubleDataExchange>("DoubleDataExchange") (key_less(), *allocator);
-            ldex = segment->construct<LongDataExchange>("LongDataExchange") (key_less(), *allocator);
+            ddex = segment->construct<DoubleDataExchange>("DoubleDataExchange") (KeyLess(), *allocator);
+            ldex = segment->construct<LongDataExchange>("LongDataExchange") (KeyLess(), *allocator);
         } else {
             segment.reset(new managed_shared_memory(open_only, SHM_NAME));
             allocator.reset(new void_allocator(segment->get_segment_manager()));
@@ -33,8 +34,8 @@ struct ShmSession {
     DoubleDataExchange & doubles() { return *ddex; }
     LongDataExchange & longs() { return *ldex; }
 
-    unique_ptr<managed_shared_memory> segment;
-    unique_ptr<void_allocator> allocator;
+    std::unique_ptr<managed_shared_memory> segment;
+    std::unique_ptr<void_allocator> allocator;
 
     protected:
 

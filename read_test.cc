@@ -18,18 +18,18 @@ int main ()
     
     // synchronized reading
     TopData<1> data;
-    TopReader<1> reader("CL.F.GLOB.0", session);
+    TopReader<1> reader("CL.F.GLOB.0");
 
     reader.read(data);
     cout << "Read data for CL.F.GLOB.0:\n" << data << endl;
 
     // what happens if keys doesn't exist?
-    TopReader<1> ES_reader("ES.F.GLOB.0", session);
+    TopReader<1> ES_reader("ES.F.GLOB.0");
     ES_reader.read(data);
     cout << "Read data for ES.F.GLOB.0:\n" << data << endl;
 
     // throughput test
-    TopReader<1> si_reader("SI.F.GLOB.0", session);
+    TopReader<1> si_reader("SI.F.GLOB.0");
     int N(million);
     long num_read(0);
     long num_correct(0);

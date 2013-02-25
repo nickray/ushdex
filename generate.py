@@ -52,9 +52,10 @@ struct {{Dt}}Data : public MetaData {
 };
 
 class {{Dt}}Base : public virtual MetaBase {
+
     protected:
-        {{Dt}}Base(const std::string & rel_contract, const std::string & prefix, ShmSession & session)
-            : MetaBase(rel_contract, prefix, session)
+        {{Dt}}Base(const std::string & rel_contract, const std::string & prefix)
+            : MetaBase(rel_contract, prefix)
         {
 {% for dol, name in members %}\
             p_{{name}} = locate_{{dol}}_entry("{{name}}");
@@ -70,10 +71,10 @@ class {{Dt}}Base : public virtual MetaBase {
 class {{Dt}}Writer : public MetaWriter<{{Dt}}Writer, {{Dt}}Data>, {{Dt}}Base {
 
     public:
-        {{Dt}}Writer(const std::string & rel_contract, ShmSession & session)
-            : MetaBase(rel_contract, {{DT}}_DATA_PREFIX, session),
-              MetaWriter<{{Dt}}Writer, {{Dt}}Data>(rel_contract, {{DT}}_DATA_PREFIX, session), 
-              {{Dt}}Base(rel_contract, {{DT}}_DATA_PREFIX, session)
+        {{Dt}}Writer(const std::string & rel_contract)
+            : MetaBase(rel_contract, {{DT}}_DATA_PREFIX),
+              MetaWriter<{{Dt}}Writer, {{Dt}}Data>(rel_contract, {{DT}}_DATA_PREFIX),
+              {{Dt}}Base(rel_contract, {{DT}}_DATA_PREFIX)
         {}
 
     protected:
@@ -89,10 +90,10 @@ class {{Dt}}Writer : public MetaWriter<{{Dt}}Writer, {{Dt}}Data>, {{Dt}}Base {
 class {{Dt}}Reader : public MetaReader<{{Dt}}Reader, {{Dt}}Data>, {{Dt}}Base {
 
     public:
-        {{Dt}}Reader(const std::string & rel_contract, ShmSession & session)
-            : MetaBase(rel_contract, {{DT}}_DATA_PREFIX, session),
-              MetaReader<{{Dt}}Reader, {{Dt}}Data>(rel_contract, {{DT}}_DATA_PREFIX, session), 
-              {{Dt}}Base(rel_contract, {{DT}}_DATA_PREFIX, session)
+        {{Dt}}Reader(const std::string & rel_contract)
+            : MetaBase(rel_contract, {{DT}}_DATA_PREFIX),
+              MetaReader<{{Dt}}Reader, {{Dt}}Data>(rel_contract, {{DT}}_DATA_PREFIX), 
+              {{Dt}}Base(rel_contract, {{DT}}_DATA_PREFIX)
         {}
 
     protected:

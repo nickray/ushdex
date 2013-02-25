@@ -44,8 +44,8 @@ class MetaBase {
             return &session.doubles()[SessionKey(rel_contract, stream.str(), session)];
         }
 
-        MetaBase(const std::string & rel_contract, const std::string & prefix, ShmSession & session)
-            : rel_contract(rel_contract), prefix(prefix), session(session)
+        MetaBase(const std::string & rel_contract, const std::string & prefix)
+            : rel_contract(rel_contract), prefix(prefix)
         {
             // Remark: In the current implementation,
             // we (currently) have output_id == ctr/2.
@@ -60,7 +60,7 @@ class MetaBase {
         // general variables
         const std::string rel_contract;
         const std::string prefix;
-        ShmSession & session;
+        static ShmSession session;
         
         // pointers
         volatile long *p_ctr;
@@ -69,6 +69,8 @@ class MetaBase {
         long *p_output_id;
 
 };
+
+ShmSession MetaBase::session{};
 
 /*
  * For future readers: Before MetaWriter/MetaReader were templated on their
@@ -86,8 +88,8 @@ class MetaWriter : public virtual MetaBase {
 
     public:
 
-        MetaWriter(const std::string & rel_contract, const std::string & prefix, ShmSession & session) 
-            : MetaBase(rel_contract, prefix, session), ctr(*MetaBase::p_ctr)
+        MetaWriter(const std::string & rel_contract, const std::string & prefix)
+            : MetaBase(rel_contract, prefix), ctr(*MetaBase::p_ctr)
         {
             // Recover from potentially crashed previous writer
             if(ctr & 1)
@@ -117,8 +119,8 @@ class MetaReader : public virtual MetaBase {
 
     public:
 
-        MetaReader(const std::string & rel_contract, const std::string & prefix, ShmSession & session) 
-            : MetaBase(rel_contract, prefix, session), previous_ctr(0)
+        MetaReader(const std::string & rel_contract, const std::string & prefix)
+            : MetaBase(rel_contract, prefix), previous_ctr(0)
         {}
 
         bool read(Data & data) {

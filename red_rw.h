@@ -34,9 +34,10 @@ struct RedData : public MetaData {
 };
 
 class RedBase : public virtual MetaBase {
+
     protected:
-        RedBase(const std::string & rel_contract, const std::string & prefix, ShmSession & session)
-            : MetaBase(rel_contract, prefix, session)
+        RedBase(const std::string & rel_contract, const std::string & prefix)
+            : MetaBase(rel_contract, prefix)
         {
             p_bid = locate_double_entry("bid");
             p_ask = locate_double_entry("ask");
@@ -52,10 +53,10 @@ class RedBase : public virtual MetaBase {
 class RedWriter : public MetaWriter<RedWriter, RedData>, RedBase {
 
     public:
-        RedWriter(const std::string & rel_contract, ShmSession & session)
-            : MetaBase(rel_contract, RED_DATA_PREFIX, session),
-              MetaWriter<RedWriter, RedData>(rel_contract, RED_DATA_PREFIX, session), 
-              RedBase(rel_contract, RED_DATA_PREFIX, session)
+        RedWriter(const std::string & rel_contract)
+            : MetaBase(rel_contract, RED_DATA_PREFIX),
+              MetaWriter<RedWriter, RedData>(rel_contract, RED_DATA_PREFIX),
+              RedBase(rel_contract, RED_DATA_PREFIX)
         {}
 
     protected:
@@ -70,10 +71,10 @@ class RedWriter : public MetaWriter<RedWriter, RedData>, RedBase {
 class RedReader : public MetaReader<RedReader, RedData>, RedBase {
 
     public:
-        RedReader(const std::string & rel_contract, ShmSession & session)
-            : MetaBase(rel_contract, RED_DATA_PREFIX, session),
-              MetaReader<RedReader, RedData>(rel_contract, RED_DATA_PREFIX, session), 
-              RedBase(rel_contract, RED_DATA_PREFIX, session)
+        RedReader(const std::string & rel_contract)
+            : MetaBase(rel_contract, RED_DATA_PREFIX),
+              MetaReader<RedReader, RedData>(rel_contract, RED_DATA_PREFIX), 
+              RedBase(rel_contract, RED_DATA_PREFIX)
         {}
 
     protected:
