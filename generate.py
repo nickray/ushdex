@@ -1,6 +1,7 @@
-from sys import argv
 import jinja2
 import yaml
+
+from sys import argv
 
 VERBOSE = False
 
