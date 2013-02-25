@@ -17,8 +17,10 @@ rel: all
 	#find .  -maxdepth 1 -executable -type f -exec strip {} \;
 	#find .  -maxdepth 1 -executable -type f -exec /opt/upx --brute {} \;
 
-all: $(HEADERS) clean_shm.o write_test.o read_test.o lookup.o list.o rw_test.o
+all: $(HEADERS) clean_shm.o write_test.o read_test.o minimal_writer_example.o minimal_reader_example.o lookup.o list.o rw_test.o
 	$(CXX) -o clean_shm clean_shm.o $(LIBS)
+	$(CXX) -o minimal_writer_example minimal_writer_example.o $(LIBS)
+	$(CXX) -o minimal_reader_example minimal_reader_example.o $(LIBS)
 	$(CXX) -o write_test write_test.o $(LIBS)
 	$(CXX) -o read_test read_test.o $(LIBS)
 	$(CXX) -o lookup lookup.o $(LIBS)
@@ -37,5 +39,5 @@ red_rw.h: red.vars
 clean:
 	rm -f *.o core
 	#find .  -maxdepth 1 -executable -type f -exec rm {} \;
-	rm -f clean_shm write_test read_test lookup list rw_test
+	rm -f clean_shm list lookup minimal_writer_example minimal_reader_example write_test read_test  rw_test
 
