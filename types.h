@@ -69,7 +69,6 @@ typedef map<Key, double, KeyLess, DoubleValueTypeAllocator> DoubleDataExchange;
 typedef std::pair<const Key, long> LongValueType;
 typedef allocator<LongValueType, segment_manager_t> LongValueTypeAllocator;
 typedef map<Key, long, KeyLess, LongValueTypeAllocator> LongDataExchange;
-
 /*
  * This is supposed to be the standard workaround,
  * but it doesn't quite work!

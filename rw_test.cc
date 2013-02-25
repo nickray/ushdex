@@ -1,4 +1,3 @@
-//#include "session.h"
 #include "trade_rw.h"
 #include "red_rw.h"
 using namespace ush;
@@ -28,8 +27,8 @@ int main ()
     TradeData rd_data;
     TradeReader tr_reader("CL.F.GLOB.0");
     tr_reader.read(rd_data);
-    cout << rd_data << endl;
 
+    cout << rd_data << endl;
     assert(rd_data == wr_data);
 
     unsigned long iterations = 1e7;
@@ -41,7 +40,6 @@ int main ()
         tr_reader.read(rd_data);
     }   
     a = nano();
-
     cout << iterations << " iterations took " << double(a - b)/1e9 << "sec, so " << double(a - b)/iterations << "nsec per iteration" << endl;
 
     RedData data_out, data_in;

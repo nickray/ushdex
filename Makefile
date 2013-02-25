@@ -1,6 +1,8 @@
 
 CXX := g++
 
+HEADERS := meta_rw.h red_rw.h session.h topN_rw.h trade_rw.h types.h util.h
+
 LIBS := -lpthread -lrt
 
 .PHONY: all clean dev rel
@@ -15,13 +17,13 @@ rel: all
 	#find .  -maxdepth 1 -executable -type f -exec strip {} \;
 	#find .  -maxdepth 1 -executable -type f -exec /opt/upx --brute {} \;
 
-all: trade_rw.h red_rw.h clean_shm.o write_test.o read_test.o lookup.o list.o test_diamond.o
+all: $(HEADERS) clean_shm.o write_test.o read_test.o lookup.o list.o rw_test.o
 	$(CXX) -o clean_shm clean_shm.o $(LIBS)
 	$(CXX) -o write_test write_test.o $(LIBS)
 	$(CXX) -o read_test read_test.o $(LIBS)
 	$(CXX) -o lookup lookup.o $(LIBS)
 	$(CXX) -o list list.o $(LIBS)
-	$(CXX) -o test_diamond test_diamond.o $(LIBS)
+	$(CXX) -o rw_test rw_test.o $(LIBS)
 
 trade_rw.h: trade.vars
 	python generate.py trade
@@ -29,11 +31,11 @@ trade_rw.h: trade.vars
 red_rw.h: red.vars
 	python generate.py red
 
-%.o: %.cc
+%.o: %.cc $(HEADERS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
 	rm -f *.o core
 	#find .  -maxdepth 1 -executable -type f -exec rm {} \;
-	rm -f clean_shm write_test read_test lookup list test_diamond
+	rm -f clean_shm write_test read_test lookup list rw_test
 

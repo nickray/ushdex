@@ -1,4 +1,3 @@
-#include "session.h"
 #include "topN_rw.h"
 using namespace ush;
 
