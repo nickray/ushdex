@@ -6,10 +6,12 @@ using namespace ush;
 #include <time.h>
 using namespace std;
 
-typedef TopData<20> Top20Data;
+/*
+typedef TopData Top20Data(20);
 typedef std::pair<const Key, Top20Data> Top20ValueType;
 typedef boost::interprocess::allocator<Top20ValueType, segment_manager_t> Top20ValueTypeAllocator;
 typedef boost::interprocess::map<Key, Top20Data, KeyLess, Top20ValueTypeAllocator> Top20DataExchange;
+*/
 
 int main ()
 {
@@ -26,7 +28,7 @@ int main ()
     cout << update_key << ": " << session.longs()[update_key] << endl;
 
     // synchronized writing
-    TopData<1> data;
+    TopData data(1);
 
     data.timestamp = 1360258008084400896;
     data.bids[0] = 9611.;
@@ -34,16 +36,16 @@ int main ()
     data.bidvols[0] = 43;
     data.askvols[0] = 19;
 
-    TopWriter<1> writer("CL.F.GLOB.0");
+    TopWriter writer(1, "CL.F.GLOB.0");
     writer.write(data);
 
     cout << "Wrote data for CL.F.GLOB.0:\n" << data << endl;
 
-    /*
+    // /*
     // throughput test, allow read_test to catch up
     sleep(1);
 
-    TopWriter<1> si_writer("SI.F.GLOB.0");
+    TopWriter si_writer(1, "SI.F.GLOB.0");
     timespec ts;
     ts.tv_sec = 0;
     ts.tv_nsec = 1;
@@ -55,19 +57,19 @@ int main ()
         // remember that this system call itself probably
         // takes ~57 microseconds anyway...
     }
-    */
+    // */
 
     // higher TopData levels
     const long M(million);
     long before, after;
  
     // 0
-    TopData<1> data1;
-    TopWriter<1> writer1("FDAX.F.XEUR.0");
+    TopData data1(1);
+    TopWriter writer1(1, "FDAX.F.XEUR.0");
     data1.timestamp = 0.;
     data1.bids[0] = 0.;
 
-    TopReader<1> reader1("FDAX.F.XEUR.0");
+    TopReader reader1(1, "FDAX.F.XEUR.0");
 
     before = nano();
     for(long i = 0; i != M; ++i) {
@@ -78,12 +80,12 @@ int main ()
     cout << "Throughput for TopData<1>: " << float(after - before)/M << " nanoseconds." << endl;
 
     // 5
-    TopData<5> data5;
-    TopWriter<5> writer5("FDAX.F.XEUR.0");
+    TopData data5(5);
+    TopWriter writer5(5, "FDAX.F.XEUR.0");
     data5.timestamp = 0.;
     data5.bids[0] = 0.;
 
-    TopReader<5> reader5("FDAX.F.XEUR.0");
+    TopReader reader5(5, "FDAX.F.XEUR.0");
 
     before = nano();
     for(long i = 0; i != M; ++i) {
@@ -94,12 +96,12 @@ int main ()
     cout << "Throughput for TopData<5>: " << float(after - before)/M << " nanoseconds." << endl;
 
     // 20
-    TopData<20> data20;
-    TopWriter<20> writer20("FDAX.F.XEUR.0");
+    TopData data20(20);
+    TopWriter writer20(20, "FDAX.F.XEUR.0");
     data20.timestamp = 0.;
     data20.bids[0] = 0.;
 
-    TopReader<20> reader20("FDAX.F.XEUR.0");
+    TopReader reader20(20, "FDAX.F.XEUR.0");
 
     before = nano();
     for(long i = 0; i != M; ++i) {

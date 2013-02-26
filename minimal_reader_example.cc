@@ -2,10 +2,10 @@
 
 int main ()
 {
-    ush::TopData<5> data;
+    ush::TopData data(5);
 
     std::string rel_contract("CL.F.GLOB.0");
-    ush::TopReader<5> reader(rel_contract);
+    ush::TopReader reader(5, rel_contract);
 
     reader.read(data);
 

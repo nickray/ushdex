@@ -2,7 +2,7 @@
 
 int main ()
 {
-    ush::TopData<5> data;
+    ush::TopData data(5);
 
     data.timestamp = 1361776225482492;
     data.input_id = 23423;
@@ -13,7 +13,7 @@ int main ()
     data.askvols[2] = 19;
 
     std::string rel_contract("CL.F.GLOB.0");
-    ush::TopWriter<5> writer(rel_contract);
+    ush::TopWriter writer(5, rel_contract);
 
     writer.write(data);
 
