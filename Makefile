@@ -1,5 +1,5 @@
 
-CXX := g++-4.7
+CXX := g++
 
 HEADERS := meta_rw.h red_rw.h session.h topN_rw.h trade_rw.h types.h util.h
 
