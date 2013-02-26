@@ -8,9 +8,6 @@
 
 namespace ush {
 
-#if __GNUC_PREREQ(4, 7)
-constexpr
-#endif
 std::string TOP_DATA_PREFIX(long N) {
         std::stringstream stream;
         stream << "Top" << N << "Data::";
