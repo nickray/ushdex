@@ -1,0 +1,36 @@
+ushdex (Universal SHared memory Data EXchange)
+==============================================
+
+Flexible, efficient header-only library to exchange
+POD ("plain old data") reducible to int32 and float32
+members betwen processes.
+
+For an example, look at minimal_writer_example
+and minimal_reader_example.
+
+Shareable data can be defined in .vars files,
+examples are trade.vars and red.vars. Running
+
+% python generate.py X
+
+generates an X_rw.h header file out of X.vars.
+
+topN_rw.h is an example of a more complicated
+POD struct that still can be reduced to double/long
+and hence exchanged via ushdex.
+
+The shared memory is dealt with via a ShmSession
+in session.h which uses Boost.Interprocess. It
+is a fixed segment containing two hash maps from
+key to double/long, where key is specified by
+relative contract and entry name. These maps are
+contained in /dev/shm/MD.EXCHANGE, which must
+be created before use via the tool ./clean_shm;
+all writers and readers assume its existence.
+
+The tool ./list lists all keys and corresponding
+values currently in the /dev/shm/MD.EXCHANGE maps.
+
+The tool ./lookup <rel_contract> <data_item>
+returns the value associated to a given key.
+
