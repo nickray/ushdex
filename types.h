@@ -9,6 +9,7 @@
 #include <boost/interprocess/containers/string.hpp>
 
 #include <ostream>
+#include <tuple>
 
 using namespace boost::interprocess;
 
@@ -44,11 +45,7 @@ struct Key {
 // necessary due to implementation of sets
 struct KeyLess : std::binary_function <Key, Key, bool> {
   bool operator() (const Key& x, const Key& y) const {
-      if(x.rel_contract < y.rel_contract)
-          return true;
-      if(x.rel_contract == y.rel_contract)
-          return x.data < y.data;
-      return false;
+      return std::tie(x.rel_contract, x.data) < std::tie(y.rel_contract, y.data);
   }
 };
 
@@ -58,10 +55,10 @@ template <typename T> using ValueType = std::pair<const Key, T>;
 template<typename T> using ValueTypeAllocator = allocator<ValueType<T>, segment_manager_t>;
 template<class T> using DataExchange = map<Key, T, KeyLess, ValueTypeAllocator<T>>;
 
+// our two main types to exchange double and long data
 typedef DataExchange<double> DoubleDataExchange;
 typedef DataExchange<long> LongDataExchange;
 #else
-// our two main types to exchange double and long data
 typedef std::pair<const Key, double> DoubleValueType;
 typedef allocator<DoubleValueType, segment_manager_t> DoubleValueTypeAllocator;
 typedef map<Key, double, KeyLess, DoubleValueTypeAllocator> DoubleDataExchange;
@@ -69,28 +66,6 @@ typedef map<Key, double, KeyLess, DoubleValueTypeAllocator> DoubleDataExchange;
 typedef std::pair<const Key, long> LongValueType;
 typedef allocator<LongValueType, segment_manager_t> LongValueTypeAllocator;
 typedef map<Key, long, KeyLess, LongValueTypeAllocator> LongDataExchange;
-/*
- * This is supposed to be the standard workaround,
- * but it doesn't quite work!
- *
-template <typename T>
-struct ValueType {
-    typedef std::pair<const Key, T> type;
-};
-
-template <typename T>
-struct ValueTypeAllocator {
-    allocator<ValueType::type, segment_manager_t> type;
-};
-
-template <typename T>
-struct DataExchange {
-    map<Key, T, KeyLess, ValueTypeAllocator::type> type;
-};
-
-typedef DataExchange<double>::type DoubleDataExchange;
-typedef DataExchange<long>::type LongDataExchange;
-*/
 #endif
 
 } // namespace ush
