@@ -34,7 +34,7 @@ int main ()
     long num_correct(0);
     long last(0);
     do {
-        si_reader.read_next(data);
+        si_reader.read_next(data, true);
         ++num_read;
         if(
             (data.timestamp == data.bids[0]) and

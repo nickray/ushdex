@@ -93,15 +93,14 @@ class MetaWriter : public virtual MetaBase {
         MetaWriter(const std::string & rel_contract, const std::string & prefix)
             : MetaBase(rel_contract, prefix), ctr(*MetaBase::p_ctr)
         {
-            // Recover from potentially crashed previous writer
-            if(ctr & 1)
-                store<long>(p_ctr, ++ctr);
+            // recover from potentially crashed previous writer
+            if(ctr & 1) store<long>(p_ctr, ++ctr);
             store<long>(p_ack, ctr);
         }
 
-        void write(const Data & data, const bool blocking=false) {
+        void write(const Data & data, const bool coupled=false) {
 
-            if(blocking)
+            if(coupled)
                 while(load<long>(p_ack) != ctr)
                     asm volatile ("pause" ::: "memory");
 
@@ -130,7 +129,7 @@ class MetaReader : public virtual MetaBase {
             : MetaBase(rel_contract, prefix), previous_ctr(0)
         {}
 
-        bool read(Data & data) {
+        bool read(Data & data, const bool coupled=false) {
             do {
                 prior_ctr = load<long>(p_ctr);
 
@@ -143,7 +142,8 @@ class MetaReader : public virtual MetaBase {
                 posterior_ctr = load<long>(p_ctr);
              } while ((posterior_ctr != prior_ctr) || (posterior_ctr & 1));
 
-            store<long>(p_ack, posterior_ctr);
+            if(coupled)
+                store<long>(p_ack, posterior_ctr);
 
             if(posterior_ctr != previous_ctr) {
                 previous_ctr = posterior_ctr;
@@ -152,9 +152,11 @@ class MetaReader : public virtual MetaBase {
                 return false;
         }
 
-        void read_next(Data & data) {
+        // this method is not so useful, but given as a blueprint
+        // for a client with a vector or readers.
+        void read_next(Data & data, const bool coupled=false) {
             do {
-                if(read(data))
+                if(read(data, coupled))
                     return;
                 // supposedly, this helps... but perhaps it's just FUD ;-)
                 asm volatile ("pause" ::: "memory");

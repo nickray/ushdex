@@ -7,7 +7,7 @@ namespace ush {
 
 // standard location /dev/shm/SHM_NAME
 const char * SHM_NAME = "MD.EXCHANGE";
-const std::size_t SHM_SIZE = 65536;
+const std::size_t SHM_SIZE = 524288;
 
 class SessionKey;
 

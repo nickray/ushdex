@@ -28,7 +28,7 @@ int main ()
     cout << update_key << ": " << session.longs()[update_key] << endl;
 
     // synchronized writing
-    TopData data(1);
+    TopData data(20);
 
     data.timestamp = 1360258008084400896;
     data.bids[0] = 9611.;
@@ -61,53 +61,21 @@ int main ()
     const long M(million);
     long before, after;
  
-    // 1
-    TopData data1(1);
-    TopWriter writer1(1, "FDAX.F.XEUR.0");
-    data1.timestamp = 0.;
-    data1.bids[0] = 0.;
+    data.timestamp = 0.;
+    data.bids[0] = 0.;
 
-    TopReader reader1(1, "FDAX.F.XEUR.0");
+    for(long N = 1; N <= 20; ++N) {
+        TopWriter writer(N, "FDAX.F.XEUR.0");
+        TopReader reader(N, "FDAX.F.XEUR.0");
 
-    before = nano();
-    for(long i = 0; i != M; ++i) {
-        writer1.write(data1);
-        reader1.read(data1);
+        before = nano();
+        for(long i = 0; i != M; ++i) {
+            writer.write(data);
+            reader.read(data);
+        }
+        after = nano();
+        cout << "Throughput for TopData<" << N << ">: " << float(after - before)/M << " nanoseconds." << endl;
     }
-    after = nano();
-    cout << "Throughput for TopData<1>: " << float(after - before)/M << " nanoseconds." << endl;
-
-    // 5
-    TopData data5(5);
-    TopWriter writer5(5, "FDAX.F.XEUR.0");
-    data5.timestamp = 0.;
-    data5.bids[0] = 0.;
-
-    TopReader reader5(5, "FDAX.F.XEUR.0");
-
-    before = nano();
-    for(long i = 0; i != M; ++i) {
-        writer5.write(data5);
-        reader5.read(data5);
-    }
-    after = nano();
-    cout << "Throughput for TopData<5>: " << float(after - before)/M << " nanoseconds." << endl;
-
-    // 20
-    TopData data20(20);
-    TopWriter writer20(20, "FDAX.F.XEUR.0");
-    data20.timestamp = 0.;
-    data20.bids[0] = 0.;
-
-    TopReader reader20(20, "FDAX.F.XEUR.0");
-
-    before = nano();
-    for(long i = 0; i != M; ++i) {
-        writer20.write(data20);
-        reader20.read(data20);
-    }
-    after = nano();
-    cout << "Throughput for TopData<20>: " << float(after - before)/M << " nanoseconds." << endl;
 
     /*
     // variant with direct memcopying
