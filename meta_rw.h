@@ -55,6 +55,7 @@ class MetaBase {
             p_timestamp = locate_long_entry("timestamp");
             p_input_id = locate_long_entry("input_id");
             p_output_id = locate_long_entry("output_id");
+            p_ack = locate_long_entry("ack");
         }
 
         // general variables
@@ -67,6 +68,7 @@ class MetaBase {
         long *p_timestamp;
         long *p_input_id;
         long *p_output_id;
+        long *p_ack;
 
 };
 
@@ -96,7 +98,11 @@ class MetaWriter : public virtual MetaBase {
                 store<long>(p_ctr, ++ctr);
         }
 
-        void write(const Data & data) {
+        void write(const Data & data, const bool blocking=false) {
+
+            if(blocking)
+                while(!load<long>(p_ack))
+                    asm volatile ("pause" ::: "memory");
 
             store<long>(p_ctr, ++ctr);
 
@@ -107,6 +113,7 @@ class MetaWriter : public virtual MetaBase {
             static_cast<Writer*>(this)->write_derived(data);
 
             store<long>(p_ctr, ++ctr);
+            store<long>(p_ack, long(false));
         }
 
     protected:
@@ -135,6 +142,8 @@ class MetaReader : public virtual MetaBase {
 
                 posterior_ctr = load<long>(p_ctr);
              } while ((posterior_ctr != prior_ctr) || (posterior_ctr & 1));
+
+            store<long>(p_ack, long(true));
 
             if(posterior_ctr != previous_ctr) {
                 previous_ctr = posterior_ctr;

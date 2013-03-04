@@ -41,7 +41,6 @@ int main ()
 
     cout << "Wrote data for CL.F.GLOB.0:\n" << data << endl;
 
-    /*
     // throughput test, allow read_test to catch up
     sleep(1);
 
@@ -52,12 +51,11 @@ int main ()
     for(long i = 1; i != million + 1; ++i) {
         data.timestamp = data.bids[0] = data.asks[0] =
             data.bidvols[0] = data.askvols[0] = i;
-        si_writer.write(data);
-        nanosleep(&ts, NULL);
+        si_writer.write(data, true);
+        //nanosleep(&ts, NULL);
         // remember that this system call itself probably
         // takes ~57 microseconds anyway...
     }
-    */
 
     // higher TopData levels
     const long M(million);
