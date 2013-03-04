@@ -61,7 +61,7 @@ int main ()
     const long M(million);
     long before, after;
  
-    // 0
+    // 1
     TopData data1(1);
     TopWriter writer1(1, "FDAX.F.XEUR.0");
     data1.timestamp = 0.;

@@ -64,7 +64,7 @@ class MetaBase {
         static ShmSession session;
         
         // pointers
-        volatile long *p_ctr;
+        long *p_ctr;
         long *p_timestamp;
         long *p_input_id;
         long *p_output_id;
