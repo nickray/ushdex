@@ -96,12 +96,13 @@ class MetaWriter : public virtual MetaBase {
             // Recover from potentially crashed previous writer
             if(ctr & 1)
                 store<long>(p_ctr, ++ctr);
+            store<long>(p_ack, ctr);
         }
 
         void write(const Data & data, const bool blocking=false) {
 
             if(blocking)
-                while(!load<long>(p_ack))
+                while(load<long>(p_ack) != ctr)
                     asm volatile ("pause" ::: "memory");
 
             store<long>(p_ctr, ++ctr);
@@ -113,7 +114,6 @@ class MetaWriter : public virtual MetaBase {
             static_cast<Writer*>(this)->write_derived(data);
 
             store<long>(p_ctr, ++ctr);
-            store<long>(p_ack, long(false));
         }
 
     protected:
@@ -143,7 +143,7 @@ class MetaReader : public virtual MetaBase {
                 posterior_ctr = load<long>(p_ctr);
              } while ((posterior_ctr != prior_ctr) || (posterior_ctr & 1));
 
-            store<long>(p_ack, long(true));
+            store<long>(p_ack, posterior_ctr);
 
             if(posterior_ctr != previous_ctr) {
                 previous_ctr = posterior_ctr;

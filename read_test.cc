@@ -32,6 +32,7 @@ int main ()
     int N(million);
     long num_read(0);
     long num_correct(0);
+    long last(0);
     do {
         si_reader.read_next(data);
         ++num_read;
@@ -43,6 +44,9 @@ int main ()
           ) 
             ++num_correct;
         //cout << data << endl;
+        if (data.output_id  != last + 1)
+            cout << ":: " << data << endl;
+        last = data.output_id;
     } while(data.timestamp < N);
 
     cout << "Missed " << (N - num_read) << " out of " << N << " ticks, and parsed " << 
