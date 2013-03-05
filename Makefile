@@ -41,3 +41,12 @@ clean:
 	#find .  -maxdepth 1 -executable -type f -exec rm {} \;
 	rm -f clean_shm list lookup minimal_writer_example minimal_reader_example write_test read_test  rw_test
 
+EIGEN_REPO = eigen-eigen-5097c01bcdc4
+EIGEN_LOC = /opt/eigen-3.1.2
+get_eigen:
+	wget --quiet http://bitbucket.org/eigen/eigen/get/3.1.2.tar.bz2
+	tar xf 3.1.2.tar.bz2
+	sudo rm -rf ${EIGEN_LOC}
+	sudo mv ${EIGEN_REPO} ${EIGEN_LOC}
+	rm -rf 3.1.2*
+

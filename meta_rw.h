@@ -15,7 +15,7 @@ struct MetaData {
     long output_id; // ctr/2
 
     friend std::ostream & operator<< (std::ostream & o, const MetaData & self) {
-        o << readable(self.timestamp) << ',' << self.input_id << ',' << self.output_id;
+        o << readable_micro(self.timestamp) << ',' << self.input_id << ',' << self.output_id;
         return o; 
     }
 
@@ -35,13 +35,13 @@ class MetaBase {
         long * locate_long_entry(const std::string & name) {
             std::stringstream stream; 
             stream << prefix << name;
-            return &session.longs()[SessionKey(rel_contract, stream.str(), session)];
+            return &session().longs()[SessionKey(rel_contract, stream.str(), session())];
         }
 
         double * locate_double_entry(const std::string & name) {
             std::stringstream stream;
             stream << prefix << name;
-            return &session.doubles()[SessionKey(rel_contract, stream.str(), session)];
+            return &session().doubles()[SessionKey(rel_contract, stream.str(), session())];
         }
 
         MetaBase(const std::string & rel_contract, const std::string & prefix)
@@ -58,11 +58,16 @@ class MetaBase {
             p_ack = locate_long_entry("ack");
         }
 
+        // trick to prevent multiple definitions of session
+        static ShmSession & session() {
+            static ShmSession session(connect_only);
+            return session;
+        }
+        
         // general variables
         const std::string rel_contract;
         const std::string prefix;
-        static ShmSession session;
-        
+
         // pointers
         long *p_ctr;
         long *p_timestamp;
@@ -71,8 +76,6 @@ class MetaBase {
         long *p_ack;
 
 };
-
-ShmSession MetaBase::session;
 
 /*
  * For future readers: Before MetaWriter/MetaReader were templated on their

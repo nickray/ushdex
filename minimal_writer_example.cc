@@ -1,7 +1,8 @@
 #include "topN_rw.h"
 
-int main ()
-{
+#include <iostream>
+
+int main () {
     ush::TopData data(5);
 
     data.timestamp = 1361776225482492;

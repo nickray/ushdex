@@ -2,8 +2,6 @@
 using namespace ush;
 
 #include <iostream>
-#include <unistd.h>
-#include <time.h>
 using namespace std;
 
 /*
@@ -13,9 +11,9 @@ typedef boost::interprocess::allocator<Top20ValueType, segment_manager_t> Top20V
 typedef boost::interprocess::map<Key, Top20Data, KeyLess, Top20ValueTypeAllocator> Top20DataExchange;
 */
 
-int main ()
+int main (int argc, char **argv)
 {
-    ShmSession session;
+    ShmSession session(connect_only);
 
     // unsynchronized writing
     SessionKey price_key("CL.F.GLOB.0", "last_traded_price", session);
@@ -41,20 +39,22 @@ int main ()
 
     cout << "Wrote data for CL.F.GLOB.0:\n" << data << endl;
 
-    // throughput test, allow read_test to catch up
-    sleep(1);
+    if(argc > 1) {
+        // throughput test, allow read_test to catch up
+        sleep(1);
 
-    TopWriter si_writer(1, "SI.F.GLOB.0");
-    timespec ts;
-    ts.tv_sec = 0;
-    ts.tv_nsec = 1;
-    for(long i = 1; i != million + 1; ++i) {
-        data.timestamp = data.bids[0] = data.asks[0] =
-            data.bidvols[0] = data.askvols[0] = i;
-        si_writer.write(data, true);
-        //nanosleep(&ts, NULL);
-        // remember that this system call itself probably
-        // takes ~57 microseconds anyway...
+        TopWriter si_writer(1, "SI.F.GLOB.0");
+        timespec ts;
+        ts.tv_sec = 0;
+        ts.tv_nsec = 1;
+        for(long i = 1; i != million + 1; ++i) {
+            data.timestamp = data.bids[0] = data.asks[0] =
+                data.bidvols[0] = data.askvols[0] = i;
+            si_writer.write(data, true);
+            //nanosleep(&ts, NULL);
+            // remember that this system call itself probably
+            // takes ~57 microseconds anyway...
+        }
     }
 
     // higher TopData levels

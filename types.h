@@ -5,10 +5,10 @@
 #include <boost/interprocess/allocators/allocator.hpp>
 
 #include <boost/interprocess/containers/map.hpp>
-#include <boost/interprocess/containers/pair.hpp>
 #include <boost/interprocess/containers/string.hpp>
 
 #include <ostream>
+#include <string>
 #include <tuple>
 
 using namespace boost::interprocess;

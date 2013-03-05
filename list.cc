@@ -1,18 +1,17 @@
 #include "session.h"
 
 #include <iostream>
-using std::cout;
 
 int main ()
 {
-    ush::ShmSession session;
+    ush::ShmSession session(ush::connect_only);
 
-    cout << "::DoubleDataExchange\n";
+    std::cout << "::DoubleDataExchange\n";
     for (auto it = session.doubles().begin(); it != session.doubles().end(); ++it)
-        cout << it->first << " => " << it->second << '\n';
-    cout << "::LongDataExchange\n";
+        std::cout << it->first << " => " << it->second << '\n';
+    std::cout << "::LongDataExchange\n";
     for (auto it = session.longs().begin(); it != session.longs().end(); ++it)
-        cout << it->first << " => " << it->second << '\n';
+        std::cout << it->first << " => " << it->second << '\n';
 
     return 0;
 }

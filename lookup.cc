@@ -1,23 +1,22 @@
 #include "session.h"
 
 #include <iostream>
-using namespace std;
 
 int main (int argc, char **argv)
 {
     if (argc != 3) {
-        cout << "Usage: lookup <rel_contract> <data_item>" << endl;
+        std::cout << "Usage: lookup <rel_contract> <data_item>" << std::endl;
         return 1;
     }
 
-    ush::ShmSession session;
+    ush::ShmSession session(ush::connect_only);
 
     ush::SessionKey key(argv[1], argv[2], session);
 
     if (session.doubles().count(key))
-        cout << key << " in session.doubles: " << session.doubles().at(key) << endl;
+        std::cout << key << " in session.doubles: " << session.doubles().at(key) << std::endl;
     if (session.longs().count(key))
-        cout << key << " in session.longs: " << session.longs().at(key) << endl;
+        std::cout << key << " in session.longs: " << session.longs().at(key) << std::endl;
 
     return 0;
 }

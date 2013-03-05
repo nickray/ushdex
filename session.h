@@ -6,33 +6,48 @@
 namespace ush {
 
 // standard location /dev/shm/SHM_NAME
-const char * SHM_NAME = "MD.EXCHANGE";
-const std::size_t SHM_SIZE = 524288;
+static const char * const standard_shm_name = "MD.EXCHANGE";
+static const std::size_t default_shm_size = 524288;
 
 class SessionKey;
 
+struct connect_only_t {};
+static const connect_only_t connect_only = connect_only_t();
+struct recreate_t {};
+static const recreate_t recreate = recreate_t();
+
 struct ShmSession {
 
-    ShmSession(bool recreate=false)
+    ShmSession(recreate_t, const std::size_t size=default_shm_size, const std::string & name=standard_shm_name)
+        : name(name), size(size)
     {
-        if(recreate) {
-            shared_memory_object::remove(SHM_NAME);
+        shared_memory_object::remove(name.c_str());
 
-            segment.reset(new managed_shared_memory(create_only, SHM_NAME, SHM_SIZE));
-            allocator.reset(new void_allocator(segment->get_segment_manager()));
- 
-            ddex = segment->construct<DoubleDataExchange>("DoubleDataExchange") (KeyLess(), *allocator);
-            ldex = segment->construct<LongDataExchange>("LongDataExchange") (KeyLess(), *allocator);
-        } else {
-            segment.reset(new managed_shared_memory(open_only, SHM_NAME));
-            allocator.reset(new void_allocator(segment->get_segment_manager()));
-            ddex = segment->find<DoubleDataExchange>("DoubleDataExchange").first;
-            ldex = segment->find<LongDataExchange>("LongDataExchange").first;
-        }
+        segment.reset(new managed_shared_memory(create_only, name.c_str(), size));
+        allocator.reset(new void_allocator(segment->get_segment_manager()));
+
+        ddex = segment->construct<DoubleDataExchange>("DoubleDataExchange") (KeyLess(), *allocator);
+        ldex = segment->construct<LongDataExchange>("LongDataExchange") (KeyLess(), *allocator);
+    }
+
+    ShmSession(connect_only_t, const std::size_t size=default_shm_size, const std::string & name=standard_shm_name)
+        : name(name), size(size)
+    {
+        segment.reset(new managed_shared_memory(open_only, name.c_str()));
+        allocator.reset(new void_allocator(segment->get_segment_manager()));
+        ddex = segment->find<DoubleDataExchange>("DoubleDataExchange").first;
+        ldex = segment->find<LongDataExchange>("LongDataExchange").first;
     }
 
     DoubleDataExchange & doubles() { return *ddex; }
     LongDataExchange & longs() { return *ldex; }
+
+    const std::string name;
+    const std::size_t size;
+
+    managed_shared_memory::size_type free_memory() { 
+        return segment->get_free_memory();
+    }
 
     std::unique_ptr<managed_shared_memory> segment;
     std::unique_ptr<void_allocator> allocator;

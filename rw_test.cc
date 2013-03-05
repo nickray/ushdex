@@ -3,12 +3,8 @@
 using namespace ush;
 
 #include <iostream>
-#include <unistd.h>
-#include <time.h>
 #include <cassert>
 using namespace std;
-
-#include "time.h"
 
 int main ()
 {

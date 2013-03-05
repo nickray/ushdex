@@ -6,7 +6,7 @@ using namespace std;
 
 int main ()
 {
-    ShmSession session;
+    ShmSession session(connect_only);
 
     // unsynchronized reading
     SessionKey price_key("CL.F.GLOB.0", "last_traded_price", session);

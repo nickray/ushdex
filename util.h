@@ -2,6 +2,7 @@
 #define USH_UTIL_H
 
 #include <ctime>
+#include <cstdio>
 
 namespace ush {
 
@@ -13,7 +14,7 @@ enum {
 
 static inline long nano()
 {
-    struct timespec tp;
+    static struct timespec tp;
     if (clock_gettime(CLOCK_REALTIME, &tp) == -1) 
         return -1;
     return tp.tv_sec*billion + tp.tv_nsec;
@@ -21,21 +22,20 @@ static inline long nano()
 
 static inline long micro()
 {
-    struct timespec tp;
+    static struct timespec tp;
     if (clock_gettime(CLOCK_REALTIME, &tp) == -1) 
         return -1;
     return tp.tv_sec*million + tp.tv_nsec/thousand;
 }
 
-char * hex_dump(const double d) {
+static inline const char * const hex_dump(const double d) {
     static char buffer[32];
     sprintf(buffer, "%a", d);
     return buffer;
 }
 
-const char * readable(const long t) {
+static inline const char * const readable_micro(const long t) {
     static char now_buffer[32 + 1]; // + 1 for '\0'
-    enum { million = 1000000 };
     long seconds(t/million);
     strftime(now_buffer, 32, "%y%m%d.%H%M%S.", localtime(&seconds));
     snprintf(&now_buffer[14], 32 - 14, "%06ld", t % million);
