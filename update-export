@@ -1,12 +1,12 @@
 #!/bin/bash
 
 PROJECT=ush
-BRANCH=master
+DESCRIBE=$(git describe)
 
 rm -rf export
 mkdir -p export/include/ush
 cp *.h export/include/ush
 
-tar czf ${PROJECT}-${BRANCH}.tgz --directory export/ .
-mv ${PROJECT}-${BRANCH}.tgz export/
+tar czf ${PROJECT}-${DESCRIBE}.tgz --directory export/ .
+mv ${PROJECT}-${DESCRIBE}.tgz export/
 
