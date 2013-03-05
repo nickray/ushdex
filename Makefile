@@ -33,8 +33,7 @@ all: $(HEADERS) $(SOURCES) $(OBJECTS) $(BINARIES)
 	$(CXX) -o $@ $< $(LIBS)
 
 clean:
-	rm -f $(OBJECTS) core
-	rm -f $(BINARIES)
+	rm -f core $(OBJECTS) $(BINARIES)
 
 get_boost:
 	wget --quiet http://downloads.sourceforge.net/project/boost/boost/1.53.0/boost_1_53_0.tar.bz2

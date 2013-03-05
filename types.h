@@ -11,9 +11,9 @@
 #include <string>
 #include <tuple>
 
-using namespace boost::interprocess;
-
 namespace ush {
+
+using namespace boost::interprocess;
 
 // basic types
 typedef managed_shared_memory::segment_manager segment_manager_t;

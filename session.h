@@ -45,7 +45,7 @@ struct ShmSession {
     const std::string name;
     const std::size_t size;
 
-    managed_shared_memory::size_type free_memory() { 
+    std::size_t free_memory() { 
         return segment->get_free_memory();
     }
 
