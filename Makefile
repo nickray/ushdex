@@ -26,14 +26,14 @@ all: $(HEADERS) $(SOURCES) $(OBJECTS) $(BINARIES)
 %_rw.h: %.vars
 	python generate.py $(<:.vars=)
 
-%.o: %.cc
+%.o: %.cc $(HEADERS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 %: %.o
 	$(CXX) -o $@ $< $(LIBS)
 
 clean:
-	rm -f *.o core
+	rm -f $(OBJECTS) core
 	rm -f $(BINARIES)
 
 get_boost:
