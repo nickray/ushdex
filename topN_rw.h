@@ -2,9 +2,9 @@
 #define TOPN_RW_H
 
 #include "meta_rw.h"
+#include "topN_types.h"
 
 #include <sstream>
-#include <vector>
 
 namespace ush {
 
@@ -17,8 +17,8 @@ std::string TOP_DATA_PREFIX(long N) {
 struct TopData : public MetaData {
 
     const long N;
-    std::vector<double> bids, asks;
-    std::vector<long> bidvols, askvols;
+    prices_t bids, asks;
+    volumes_t bidvols, askvols;
 
     TopData(const long N) : MetaData(), N(N), bids(N), asks(N), bidvols(N), askvols(N) {}
 
