@@ -5,6 +5,7 @@
 #include "topN_types.h"
 
 #include <sstream>
+#include <vector>
 
 namespace ush {
 

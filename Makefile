@@ -1,44 +1,40 @@
 CXX := g++
-HEADERS := meta_rw.h red_rw.h session.h topN_rw.h trade_rw.h types.h util.h
-LIBS := -lpthread -lrt
 BOOST_LOC := /opt/boost_1_53_0
-EIGEN_LOC = /opt/eigen-3.1.2
+EIGEN_LOC := /opt/eigen-3.1.2
+CXXFLAGS := -std=c++0x -Wall -I$(BOOST_LOC)
+
+SOURCES := $(wildcard *.cc)
+HEADERS := $(wildcard *.h)
+OBJECTS := $(SOURCES:.cc=.o)
+BINARIES := $(OBJECTS:.o=)
+
+LIBS := -lpthread -lrt
 
 .PHONY: all clean dev rel get_eigen
 
-dev: CXXFLAGS := -std=c++0x -Wall -Werror -g -Wfatal-errors -I$(BOOST_LOC)
+dev: CXXFLAGS += -Werror -Wfatal-errors -g
 dev: all
 
 # Some say that -Os is faster than -Os due to cache line
 # optimizations or whatever, but experimentally -O3 wins here
-rel: CXXFLAGS := -std=c++0x -O3 -I$(BOOST_LOC) -I$(EIGEN_LOC) -DUSE_EIGEN
+rel: CXXFLAGS += -O3 -I$(EIGEN_LOC) -DUSE_EIGEN
 rel: all
-	#find .  -maxdepth 1 -executable -type f -exec strip {} \;
-	#find .  -maxdepth 1 -executable -type f -exec /opt/upx --brute {} \;
+	strip $(BINARIES)
 
-all: $(HEADERS) clean_shm.o write_test.o read_test.o minimal_writer_example.o minimal_reader_example.o lookup.o list.o rw_test.o
-	$(CXX) -o clean_shm clean_shm.o $(LIBS)
-	$(CXX) -o minimal_writer_example minimal_writer_example.o $(LIBS)
-	$(CXX) -o minimal_reader_example minimal_reader_example.o $(LIBS)
-	$(CXX) -o write_test write_test.o $(LIBS)
-	$(CXX) -o read_test read_test.o $(LIBS)
-	$(CXX) -o lookup lookup.o $(LIBS)
-	$(CXX) -o list list.o $(LIBS)
-	$(CXX) -o rw_test rw_test.o $(LIBS)
+all: $(HEADERS) $(SOURCES) $(OBJECTS) $(BINARIES)
 
-trade_rw.h: trade.vars
-	python generate.py trade
+%_rw.h: %.vars
+	python generate.py $(<:.vars=)
 
-red_rw.h: red.vars
-	python generate.py red
-
-%.o: %.cc $(HEADERS)
+%.o: %.cc
 	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+%: %.o
+	$(CXX) -o $@ $< $(LIBS)
 
 clean:
 	rm -f *.o core
-	#find .  -maxdepth 1 -executable -type f -exec rm {} \;
-	rm -f clean_shm list lookup minimal_writer_example minimal_reader_example write_test read_test  rw_test
+	rm -f $(BINARIES)
 
 get_boost:
 	wget --quiet http://downloads.sourceforge.net/project/boost/boost/1.53.0/boost_1_53_0.tar.bz2
