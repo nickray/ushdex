@@ -5,7 +5,7 @@
 int main (int argc, char **argv)
 {
     if (argc != 3) {
-        std::cout << "Usage: lookup <rel_contract> <data_item>" << std::endl;
+        std::cout << "usage: lookup <rel_contract> <data_item>" << std::endl;
         return 1;
     }
 

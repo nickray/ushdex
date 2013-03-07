@@ -1,6 +1,7 @@
 CXX := g++
 BOOST_LOC := /opt/boost_1_53_0
 EIGEN_LOC := /opt/eigen-3.1.2
+EIGEN_ARCH_LOC := /usr/include/eigen3
 CXXFLAGS := -std=c++0x -Wall -I$(BOOST_LOC)
 
 SOURCES := $(wildcard *.cc)
@@ -15,14 +16,14 @@ LIBS := -lpthread -lrt
 dev: CXXFLAGS += -Werror -Wfatal-errors -g
 dev: all
 
-# Some say that -Os is faster than -Os due to cache line
-# optimizations or whatever, but experimentally -O3 wins here
-rel: CXXFLAGS += -O3 -I$(EIGEN_LOC) -DUSE_EIGEN
+# in this case -O3 is faster than -Os
+rel: CXXFLAGS += -O3 -I$(EIGEN_LOC) -I$(EIGEN_ARCH_LOC) -DUSE_EIGEN
 rel: all
 	strip $(BINARIES)
 
 all: $(HEADERS) $(SOURCES) $(OBJECTS) $(BINARIES)
 
+# handy suffix rules
 %_rw.h: %.vars
 	python generate.py $(<:.vars=)
 
