@@ -9,7 +9,7 @@
 
 namespace ush {
 
-std::string TOP_DATA_PREFIX(long N) {
+inline std::string TOP_DATA_PREFIX(long N) {
         std::stringstream stream;
         stream << "Top" << N << "Data::";
         return stream.str();
