@@ -44,9 +44,6 @@ int main (int argc, char **argv)
         sleep(1);
 
         TopWriter si_writer(1, "SI.F.GLOB.0");
-        timespec ts;
-        ts.tv_sec = 0;
-        ts.tv_nsec = 1;
         for(long i = 1; i != million + 1; ++i) {
             data.timestamp = data.bids[0] = data.asks[0] =
                 data.bidvols[0] = data.askvols[0] = i;
