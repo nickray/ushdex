@@ -15,7 +15,7 @@ int main (int argc, char **argv) {
 
     long N(std::atol(argv[1]));
     ush::TopData data(N);
-    std::string rel_contract(argv[1]);
+    std::string rel_contract(argv[2]);
     ush::TopReader reader(N, rel_contract);
 
     while(true) {
