@@ -23,7 +23,7 @@ public:
         do {
             for(unsigned long i = 0; i != readers.size(); ++i)
                 changed[i] = readers[i].read(datas[i]);
-        } while (!changed.any());
+        } while (changed.none());
 
         // make sure we didn't skip one
         do {
