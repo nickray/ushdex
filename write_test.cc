@@ -1,15 +1,8 @@
-#include "topN_rw.h"
+#include "book_rw.h"
 using namespace ush;
 
 #include <iostream>
 using namespace std;
-
-/*
-typedef TopData Top20Data(20);
-typedef std::pair<const Key, Top20Data> Top20ValueType;
-typedef boost::interprocess::allocator<Top20ValueType, segment_manager_t> Top20ValueTypeAllocator;
-typedef boost::interprocess::map<Key, Top20Data, KeyLess, Top20ValueTypeAllocator> Top20DataExchange;
-*/
 
 int main (int argc, char **argv)
 {
@@ -26,7 +19,8 @@ int main (int argc, char **argv)
     cout << update_key << ": " << session.longs()[update_key] << endl;
 
     // synchronized writing
-    TopData data(20);
+    BookWriter writer(10, 2, "CL.F.GLOB.0");
+    BookData data(writer);
 
     data.timestamp = 1360258008084400896;
     data.bids[0] = 9611.;
@@ -34,7 +28,6 @@ int main (int argc, char **argv)
     data.bidvols[0] = 43;
     data.askvols[0] = 19;
 
-    TopWriter writer(1, "CL.F.GLOB.0");
     writer.write(data);
 
     cout << "Wrote data for CL.F.GLOB.0:\n" << data << endl;
@@ -43,7 +36,7 @@ int main (int argc, char **argv)
         // throughput test, allow read_test to catch up
         sleep(1);
 
-        TopWriter si_writer(1, "SI.F.GLOB.0");
+        BookWriter si_writer(1, 0, "SI.F.GLOB.0");
         for(long i = 1; i != million + 1; ++i) {
             data.timestamp = data.bids[0] = data.asks[0] =
                 data.bidvols[0] = data.askvols[0] = i;
@@ -54,7 +47,7 @@ int main (int argc, char **argv)
         }
     }
 
-    // higher TopData levels
+    // higher BookData levels
     const long M(million);
     long before, after;
  
@@ -62,56 +55,20 @@ int main (int argc, char **argv)
     data.bids[0] = 0.;
 
     for(long N = 1; N <= 20; ++N) {
-        TopWriter writer(N, "FDAX.F.XEUR.0");
-        TopReader reader(N, "FDAX.F.XEUR.0");
+        for(long n = 1; n <= 5; ++n) {
+            BookWriter writer(N, n, "FDAX.F.XEUR.0");
+            BookReader reader("FDAX.F.XEUR.0");
+            BookData dataNn(reader);
 
-        before = nano();
-        for(long i = 0; i != M; ++i) {
-            writer.write(data);
-            reader.read(data);
+            before = nano();
+            for(long i = 0; i != M; ++i) {
+                writer.write(dataNn);
+                reader.read(dataNn);
+            }
+            after = nano();
+            cout << "Throughput for BookData(" << N << ", " << n << "): " << float(after - before)/M << " nanoseconds." << endl;
         }
-        after = nano();
-        cout << "Throughput for TopData<" << N << ">: " << float(after - before)/M << " nanoseconds." << endl;
     }
-
-    /*
-    // variant with direct memcopying
-    Top20DataExchange * t20ex;
-    try {
-        session.segment->construct<Top20DataExchange>("Top20DataExchange") (key_less(), *(session.allocator));
-        cout << "created" << endl;
-    } catch(boost::interprocess::interprocess_exception) {
-        session.segment->find<Top20DataExchange>("Top20DataExchange").first;
-        cout << "found" << endl;
-    }
-    //session.segment->construct<Top20DataExchange>("Top20DataExchange") (key_less(), *(session.allocator));
-
-    SessionKey key("CL.F.GLOB.0", "Top20Data", session);
-    cout << "a" << endl;
-    TopData<20> my_data((*t20ex)[key]);
-    cout << "b" << endl;
-
-    before = nano();
-    TopData<20> my_data_out;
-    TopData<20> my_data_in;
-    long actual_ctr;
-    volatile long * ctr(&actual_ctr);
-    long prior_ctr, posterior_ctr;
-
-    for(long i = 0; i != M; ++i) {
-        store<long>(ctr, *ctr + 1);
-        my_data = my_data_out;
-        store<long>(ctr, *ctr + 1);
-        do {
-            prior_ctr = load<long>(ctr);
-            my_data_in = my_data;
-            posterior_ctr = load<long>(ctr);
-        } while ((posterior_ctr != prior_ctr) || (posterior_ctr & 1));
-    }
-    after = nano();
-    cout << "Throughput for TopDataExchange directly: " << float(after - before)/M << " nanoseconds." << endl;
-    */
 
     return 0;
 }
-

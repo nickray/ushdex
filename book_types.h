@@ -1,5 +1,5 @@
-#ifndef TOPN_TYPES_H
-#define TOPN_TYPES_H
+#ifndef BOOK_TYPES_H
+#define BOOK_TYPES_H
 
 #ifdef USE_EIGEN
 #include <Eigen/Dense>
@@ -15,11 +15,9 @@ namespace Eigen {
 namespace ush {
 
 #ifndef USE_EIGEN
-    #include <vector>
     typedef std::vector<double> prices_t;
     typedef std::vector<long> volumes_t;
 #else
-    #include <Eigen/Dense>
     #ifndef USE_ROWS
     typedef Eigen::RowVectorXd prices_t;
     typedef Eigen::RowVectorXl volumes_t;
@@ -31,4 +29,4 @@ namespace ush {
 
 } // namespace ush
 
-#endif // TOPN_TYPES_H
+#endif // BOOK_TYPES_H

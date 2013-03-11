@@ -1,4 +1,4 @@
-#include "topN_rw.h"
+#include "book_rw.h"
 using namespace ush;
 
 #include <iostream>
@@ -16,14 +16,14 @@ int main ()
     cout << update_key << ": " << session.longs()[update_key] << endl;
     
     // synchronized reading
-    TopData data(1);
-    TopReader reader(1, "CL.F.GLOB.0");
+    BookReader reader("CL.F.GLOB.0");
+    BookData data(reader);
 
     reader.read(data);
     cout << "Read data for CL.F.GLOB.0:\n" << data << endl;
 
     // what happens if keys doesn't exist?
-    TopReader ES_reader(1, "ES.F.GLOB.0");
+    BookReader ES_reader("ES.F.GLOB.0");
     ES_reader.read(data);
     cout << "Read data for ES.F.GLOB.0:\n" << data << endl;
 
@@ -34,7 +34,7 @@ int main ()
     cout << "best_ask:" << data.best_ask() << endl;
 
     // throughput test
-    TopReader si_reader(1, "SI.F.GLOB.0");
+    BookReader si_reader("SI.F.GLOB.0");
     int N(million);
     long num_read(0);
     long num_correct(0);
@@ -60,4 +60,3 @@ int main ()
 
     return 0;
 }
-
