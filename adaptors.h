@@ -1,6 +1,8 @@
 #ifndef ADAPTORS_H
 #define ADAPTORS_H
 
+ // The contents here are experimental -- not sure it's a good idea yet!
+
 #include "book_rw.h"
 
 namespace ush {

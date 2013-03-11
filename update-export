@@ -10,7 +10,7 @@ mkdir -p export/include/ush
 cp *.h export/include/ush
 
 mkdir -p export/bin
-cp ush_clean ush_list ush_lookup ush_depths red_read red_read_all book_read book_read_all best_read export/bin 
+cp ush_clean ush_list ush_lookup ush_depths red_read red_read_all book_read book_read_all books_read_all best_read export/bin 
 
 #tar czf ${PROJECT}-${DESCRIBE}.tgz --directory export/ .
 #mv ${PROJECT}-${DESCRIBE}.tgz export/

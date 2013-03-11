@@ -16,7 +16,6 @@ const char * const BOOK_DATA_PREFIX = "BookData::";
 const double infinity = std::numeric_limits<double>::infinity();
 
 class BookSize {
-
     public:
         BookSize(const long N, const long n) : N(N), n(n) {}
         long depth() { return N; }
@@ -45,40 +44,41 @@ struct BookData : public BookSize, public MetaData {
     BookData(BookSize & base)
      :  BookSize(base.depth(), base.implied_depth()),
         MetaData(),
-        // TODO: check if we can use N, n here
-        bids(base.depth()), asks(base.depth()), bidvols(base.depth()), askvols(base.depth()),
-        implied_bids(base.implied_depth()), implied_asks(base.implied_depth()),
-        implied_bidvols(base.implied_depth()), implied_askvols(base.implied_depth())
-    {}
+        bids(N), asks(N), bidvols(N), askvols(N),
+        implied_bids(n), implied_asks(n), implied_bidvols(n), implied_askvols(n)
+    {
+#ifdef USE_EIGEN
+        bids.setZero(); asks.setZero(); bidvols.setZero(); askvols.setZero();
+        implied_bids.setZero(); implied_asks.setZero(); implied_bidvols.setZero(); implied_askvols.setZero();
+#endif
+    }
 
     friend std::ostream & operator<< (std::ostream & o, const BookData & self) {
-        o << static_cast<const MetaData &>(self) << ',';
+        o << static_cast<const MetaData &>(self);
 
         const long N(self.N);
         const long n(self.n);
-        o << N << ',';
-        o << n << ',';
+        o << ',' << N << ',' << n;
 
         for(long i = 0; i != N; ++i) {
+            o << ',';
             o << self.bids[i] << ',';
             o << hex_dump(self.bids[i]) << ',';
             o << self.asks[i] << ',';
             o << hex_dump(self.asks[i]) << ',';
             o << self.bidvols[i] << ',';
             o << self.askvols[i];
-            if (i < N - 1) o << ',';
         }
 
         if (n != 0) {
-            o << ',';
             for(long i = 0; i != n; ++i) {
+                o << ',';
                 o << self.implied_bids[i] << ',';
                 o << hex_dump(self.implied_bids[i]) << ',';
                 o << self.implied_asks[i] << ',';
                 o << hex_dump(self.implied_asks[i]) << ',';
                 o << self.implied_bidvols[i] << ',';
                 o << self.implied_askvols[i];
-                if (i < n - 1) o << ',';
             }
         }
 

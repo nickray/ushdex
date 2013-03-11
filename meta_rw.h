@@ -136,6 +136,10 @@ class MetaReader : public virtual MetaBase {
             do {
                 prior_ctr = load<long>(p_ctr);
 
+                // small optimization for looping over read of several readers
+                if(prior_ctr == previous_ctr)
+                    return false;
+
                 data.timestamp = *p_timestamp;
                 data.input_id = *p_input_id;
                 data.output_id = *p_output_id;
