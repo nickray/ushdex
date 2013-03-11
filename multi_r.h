@@ -11,7 +11,7 @@ class MultiReader {
 public:
     MultiReader(std::vector<Reader> readers) : readers(readers) {
         for(auto it = readers.begin(); it != readers.end(); ++it) {
-            datas.push_back(Data(*it));
+            datas.emplace_back(Data(*it));
         }
         changed.resize(datas.size(), false);
         changed_again.resize(datas.size());

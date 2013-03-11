@@ -16,7 +16,7 @@ int main (int argc, char **argv) {
     std::vector<ush::BookReader> readers;
     for(int i = 1; i != argc; ++i) {
         std::string rel_contract(argv[i]);
-        readers.push_back(ush::BookReader(rel_contract));
+        readers.emplace_back(ush::BookReader(rel_contract));
     }
 
     ush::MultiReader<ush::BookReader, ush::BookData> multireader(readers);
