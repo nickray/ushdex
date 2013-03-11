@@ -13,6 +13,7 @@
 namespace ush {
 
 const char * const BOOK_DATA_PREFIX = "BookData::";
+const double infinity = std::numeric_limits<double>::infinity();
 
 class BookSize {
 
@@ -89,8 +90,8 @@ struct BookData : public BookSize, public MetaData {
             return bids[0];
         else
             return std::max(
-                bids[0] > 0         ? bids[0]         : -std::numeric_limits<double>::infinity(),
-                implied_bids[0] > 0 ? implied_bids[0] : -std::numeric_limits<double>::infinity()); 
+                bids[0] > 0         ? bids[0]         : -infinity,
+                implied_bids[0] > 0 ? implied_bids[0] : -infinity);
     }
 
     double best_ask() { 
@@ -98,8 +99,8 @@ struct BookData : public BookSize, public MetaData {
             return asks[0];
         else
             return std::min(
-            asks[0] > 0         ? asks[0]         : std::numeric_limits<double>::infinity(),
-            implied_asks[0] > 0 ? implied_asks[0] : std::numeric_limits<double>::infinity()); 
+            asks[0] > 0         ? asks[0]         : infinity,
+            implied_asks[0] > 0 ? implied_asks[0] : infinity); 
     }
 
 };
