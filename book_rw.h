@@ -65,25 +65,20 @@ struct BookData : public BookSize, public MetaData {
             o << hex_dump(self.asks[i]) << ',';
             o << self.bidvols[i] << ',';
             o << self.askvols[i];
+            if (i < N - 1) o << ',';
         }
 
         if (n != 0) {
             o << ',';
-            for(long i = 0; i != n - 1; ++i) {
+            for(long i = 0; i != n; ++i) {
                 o << self.implied_bids[i] << ',';
                 o << hex_dump(self.implied_bids[i]) << ',';
                 o << self.implied_asks[i] << ',';
                 o << hex_dump(self.implied_asks[i]) << ',';
                 o << self.implied_bidvols[i] << ',';
-                o << self.implied_askvols[i] << ',';
+                o << self.implied_askvols[i];
+                if (i < n - 1) o << ',';
             }
-
-            o << self.implied_bids[n - 1] << ',';
-            o << hex_dump(self.implied_bids[n - 1]) << ',';
-            o << self.implied_asks[n - 1] << ',';
-            o << hex_dump(self.implied_asks[n - 1]) << ',';
-            o << self.implied_bidvols[n - 1] << ',';
-            o << self.implied_askvols[n - 1];
         }
 
         return o;
