@@ -12,6 +12,7 @@ int main () {
     data.asks[4] = 9612.;
     data.bidvols[0] = 43;
     data.askvols[2] = 19;
+    data.implied_bids[0] = 9610.;
 
     std::string rel_contract("CL.F.GLOB.0");
     ush::TopWriter writer(5, rel_contract);

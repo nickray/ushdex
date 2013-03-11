@@ -27,6 +27,12 @@ int main ()
     ES_reader.read(data);
     cout << "Read data for ES.F.GLOB.0:\n" << data << endl;
 
+    cout << "best_bid:" << data.best_bid() << endl;
+    cout << "best_ask:" << data.best_ask() << endl;
+    data.bids[0] = data.implied_asks[0] = 3.;
+    cout << "best_bid:" << data.best_bid() << endl;
+    cout << "best_ask:" << data.best_ask() << endl;
+
     // throughput test
     TopReader si_reader(1, "SI.F.GLOB.0");
     int N(million);
