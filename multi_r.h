@@ -31,7 +31,7 @@ public:
     // N.B. we are not using coupled mode here,
     //      the second do loop would exhaust the writers.
     const boost::dynamic_bitset<> & read_next() {
-
+        
         // get at least one update
         do {
             for(unsigned long i = 0; i != readers.size(); ++i)
@@ -46,6 +46,13 @@ public:
 
         // N.B. this can be misleading if any of the writers 
         //      cheat by writing data twice
+        return changed;
+    }
+
+    const boost::dynamic_bitset<> & read() {
+
+        for(unsigned long i = 0; i != readers.size(); ++i)
+            changed[i] = readers[i].read(datas[i]);
         return changed;
     }
 
