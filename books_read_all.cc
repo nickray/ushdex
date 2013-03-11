@@ -13,6 +13,7 @@ int main (int argc, char **argv) {
         return 1;
     }
 
+    /*
     std::vector<ush::BookReader> readers;
     for(int i = 1; i != argc; ++i) {
         std::string rel_contract(argv[i]);
@@ -20,6 +21,14 @@ int main (int argc, char **argv) {
     }
 
     ush::MultiReader<ush::BookReader, ush::BookData> multireader(readers);
+    */
+
+    std::vector<std::string> rel_contracts;
+    for(int i = 1; i != argc; ++i) {
+        rel_contracts.emplace_back(std::string(argv[i]));
+    }
+
+    ush::MultiReader<ush::BookReader, ush::BookData> multireader(rel_contracts);
 
     while(true) {
         std::cout << multireader.read_next() << ',' << multireader << std::endl;

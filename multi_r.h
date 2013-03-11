@@ -6,7 +6,7 @@
 
 namespace ush {
 
-template <typename Reader, typename Data>
+template <class Reader, class Data>
 class MultiReader {
 public:
     MultiReader(std::vector<Reader> readers) : readers(readers) {
@@ -17,6 +17,19 @@ public:
         changed_again.resize(datas.size());
     }
 
+    MultiReader(std::vector<std::string> rel_contracts) : readers() {
+        for(auto it = rel_contracts.begin(); it != rel_contracts.end(); ++it) {
+            readers.emplace_back(Reader(*it));
+        }
+        for(auto it = readers.begin(); it != readers.end(); ++it) {
+            datas.emplace_back(Data(*it));
+        }
+        changed.resize(datas.size(), false);
+        changed_again.resize(datas.size());
+    }
+
+    // N.B. we are not using coupled mode here,
+    //      the second do loop would exhaust the writers.
     const boost::dynamic_bitset<> & read_next() {
 
         // get at least one update

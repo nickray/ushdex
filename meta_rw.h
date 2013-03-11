@@ -65,8 +65,8 @@ class MetaBase {
         }
         
         // general variables
-        const std::string rel_contract;
-        const std::string prefix;
+        /*const*/ std::string rel_contract;
+        /*const*/ std::string prefix;
 
         // pointers
         long *p_ctr;
