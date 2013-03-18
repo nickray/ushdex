@@ -2,13 +2,12 @@ CXX := g++
 BOOST_LOC := /opt/boost_1_53_0
 EIGEN_LOC := /opt/eigen-3.1.2
 EIGEN_ARCH_LOC := /usr/include/eigen3
-CXXFLAGS := -std=c++0x -Wall -I$(BOOST_LOC)
+CXXFLAGS := -std=c++0x -Wall -MMD -I$(BOOST_LOC)
 
 SOURCES := $(wildcard *.cc)
-HEADERS := $(wildcard *.h)
 OBJECTS := $(SOURCES:.cc=.o)
+DEPENDENCIES :=  $(OBJECTS:.o=.d)
 BINARIES := $(OBJECTS:.o=)
-
 LIBS := -lpthread -lrt
 
 .PHONY: all clean dev rel get_eigen
@@ -17,24 +16,26 @@ dev: CXXFLAGS += -Werror -Wfatal-errors -g
 dev: all
 
 # in this case -O3 is faster than -Os
-rel: CXXFLAGS += -O3 -I$(EIGEN_LOC) -I$(EIGEN_ARCH_LOC) -DUSE_EIGEN
+rel: CXXFLAGS += -O3#-I$(EIGEN_LOC) -I$(EIGEN_ARCH_LOC) -DUSE_EIGEN
 rel: all
 	strip $(BINARIES)
 
-all: $(HEADERS) $(SOURCES) $(OBJECTS) $(BINARIES)
+all: $(SOURCES) $(OBJECTS) $(BINARIES)
+
+-include $(DEPENDENCIES)
 
 # handy suffix rules
 %_rw.h: %.vars
 	python generate.py $(<:.vars=)
 
-%.o: %.cc $(HEADERS)
+%.o: %.cc
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 %: %.o
 	$(CXX) -o $@ $< $(LIBS)
 
 clean:
-	rm -f core $(OBJECTS) $(BINARIES)
+	rm -f core *.d $(OBJECTS) $(BINARIES)
 
 get_boost:
 	wget --quiet http://downloads.sourceforge.net/project/boost/boost/1.53.0/boost_1_53_0.tar.bz2
