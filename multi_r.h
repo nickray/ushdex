@@ -14,8 +14,8 @@ public:
         setup();
     }
 
-    MultiReader(std::vector<std::string> rel_contracts) : readers() {
-        for(auto it = rel_contracts.begin(); it != rel_contracts.end(); ++it)
+    MultiReader(const std::vector<std::string> & rel_contracts) : readers() {
+        for(auto it = rel_contracts.cbegin(); it != rel_contracts.cend(); ++it)
             readers.emplace_back(Reader(*it));
         setup();
     }
@@ -64,7 +64,7 @@ protected:
     boost::dynamic_bitset<> changed_again;
 
     inline void setup() {
-        for(auto it = readers.begin(); it != readers.end(); ++it)
+        for(auto it = readers.cbegin(); it != readers.cend(); ++it)
             datas.emplace_back(Data(*it));
         changed.resize(datas.size(), false);
         changed_again.resize(datas.size());

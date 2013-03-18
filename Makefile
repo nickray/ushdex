@@ -10,7 +10,7 @@ DEPENDENCIES :=  $(OBJECTS:.o=.d)
 BINARIES := $(OBJECTS:.o=)
 LIBS := -lpthread -lrt
 
-.PHONY: all clean dev rel get_eigen
+.PHONY: all clean dev rel get_boost get_eigen
 
 dev: CXXFLAGS += -Werror -Wfatal-errors -g
 dev: all
@@ -35,7 +35,7 @@ all: $(SOURCES) $(OBJECTS) $(BINARIES)
 	$(CXX) -o $@ $< $(LIBS)
 
 clean:
-	rm -f core *.d $(OBJECTS) $(BINARIES)
+	rm -f core *.d *.o $(BINARIES)
 
 get_boost:
 	wget --quiet http://downloads.sourceforge.net/project/boost/boost/1.53.0/boost_1_53_0.tar.bz2

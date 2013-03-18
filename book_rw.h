@@ -18,8 +18,8 @@ const double infinity = std::numeric_limits<double>::infinity();
 class BookSize {
     public:
         BookSize(const long N, const long n) : N(N), n(n) {}
-        long depth() { return N; }
-        long implied_depth() { return n; }
+        long depth() const { return N; }
+        long implied_depth() const { return n; }
     protected:
         long N;
         long n;
@@ -41,7 +41,7 @@ struct BookData : public BookSize, public MetaData {
         assert(n >= 0);
     }
 
-    BookData(BookSize & base)
+    BookData(const BookSize & base)
      :  BookSize(base.depth(), base.implied_depth()),
         MetaData(),
         bids(N), asks(N), bidvols(N), askvols(N),
