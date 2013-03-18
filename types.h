@@ -13,21 +13,25 @@
 
 namespace ush {
 
-using namespace boost::interprocess;
+namespace ipc {
+    using namespace boost::interprocess;
+}
 
 // basic types
-typedef managed_shared_memory::segment_manager segment_manager_t;
-typedef allocator<void, segment_manager_t> void_allocator;
+typedef ipc::managed_shared_memory::segment_manager segment_manager_t;
+typedef ipc::allocator<void, segment_manager_t> void_allocator;
 
 // interprocess version of string
-typedef allocator<char, segment_manager_t> char_allocator;
-typedef basic_string<char, std::char_traits<char>, char_allocator> IpcString;
+typedef ipc::allocator<char, segment_manager_t> char_allocator;
+namespace ipc {
+    typedef ipc::basic_string<char, std::char_traits<char>, char_allocator> string;
+}
 
 // basic key type, e.g. ("CL.F.GLOB.0", "last_traded_price")
 struct Key {
 
-    IpcString rel_contract;
-    IpcString data;
+    ipc::string rel_contract;
+    ipc::string data;
 
     Key(const std::string & rel_contract, const std::string & data, 
             const void_allocator & allocator)
@@ -52,20 +56,20 @@ struct KeyLess : std::binary_function <Key, Key, bool> {
 #if __GNUC_PREREQ(4, 7)
 /* template aliases are available */
 template <typename T> using ValueType = std::pair<const Key, T>;
-template<typename T> using ValueTypeAllocator = allocator<ValueType<T>, segment_manager_t>;
-template<class T> using DataExchange = map<Key, T, KeyLess, ValueTypeAllocator<T>>;
+template<typename T> using ValueTypeAllocator = ipc::allocator<ValueType<T>, segment_manager_t>;
+template<class T> using DataExchange = ipc::map<Key, T, KeyLess, ValueTypeAllocator<T>>;
 
 // our two main types to exchange double and long data
-typedef DataExchange<double> DoubleDataExchange;
-typedef DataExchange<long> LongDataExchange;
+using DoubleDataExchange = DataExchange<double>;
+using LongDataExchange = DataExchange<long>;
 #else
 typedef std::pair<const Key, double> DoubleValueType;
-typedef allocator<DoubleValueType, segment_manager_t> DoubleValueTypeAllocator;
-typedef map<Key, double, KeyLess, DoubleValueTypeAllocator> DoubleDataExchange;
+typedef ipc::allocator<DoubleValueType, segment_manager_t> DoubleValueTypeAllocator;
+typedef ipc::map<Key, double, KeyLess, DoubleValueTypeAllocator> DoubleDataExchange;
 
 typedef std::pair<const Key, long> LongValueType;
-typedef allocator<LongValueType, segment_manager_t> LongValueTypeAllocator;
-typedef map<Key, long, KeyLess, LongValueTypeAllocator> LongDataExchange;
+typedef ipc::allocator<LongValueType, segment_manager_t> LongValueTypeAllocator;
+typedef ipc::map<Key, long, KeyLess, LongValueTypeAllocator> LongDataExchange;
 #endif
 
 } // namespace ush

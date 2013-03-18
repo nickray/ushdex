@@ -21,9 +21,9 @@ struct ShmSession {
     ShmSession(recreate_t, const std::size_t size=default_shm_size, const std::string & name=standard_shm_name)
         : name(name), size(size)
     {
-        shared_memory_object::remove(name.c_str());
+        ipc::shared_memory_object::remove(name.c_str());
 
-        segment.reset(new managed_shared_memory(create_only, name.c_str(), size));
+        segment.reset(new ipc::managed_shared_memory(ipc::create_only, name.c_str(), size));
         allocator.reset(new void_allocator(segment->get_segment_manager()));
 
         ddex = segment->construct<DoubleDataExchange>("DoubleDataExchange") (KeyLess(), *allocator);
@@ -33,7 +33,7 @@ struct ShmSession {
     ShmSession(connect_only_t, const std::size_t size=default_shm_size, const std::string & name=standard_shm_name)
         : name(name), size(size)
     {
-        segment.reset(new managed_shared_memory(open_only, name.c_str()));
+        segment.reset(new ipc::managed_shared_memory(ipc::open_only, name.c_str()));
         allocator.reset(new void_allocator(segment->get_segment_manager()));
         ddex = segment->find<DoubleDataExchange>("DoubleDataExchange").first;
         ldex = segment->find<LongDataExchange>("LongDataExchange").first;
@@ -49,7 +49,7 @@ struct ShmSession {
         return segment->get_free_memory();
     }
 
-    std::unique_ptr<managed_shared_memory> segment;
+    std::unique_ptr<ipc::managed_shared_memory> segment;
     std::unique_ptr<void_allocator> allocator;
 
     protected:

@@ -30,16 +30,23 @@ static inline long micro()
 
 static inline const char * const hex_dump(const double d) {
     static char buffer[32];
-    sprintf(buffer, "%a", d);
+#if __GNUC_PREREQ(4, 6)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
+    snprintf(buffer, sizeof(buffer), "%a", d);
+#if __GNUC_PREREQ(4, 6)
+#pragma GCC diagnostic pop
+#endif
     return buffer;
 }
 
 static inline const char * const readable_micro(const long t) {
-    static char now_buffer[32 + 1]; // + 1 for '\0'
+    static char buffer[32];
     long seconds(t/million);
-    strftime(now_buffer, 32, "%y%m%d.%H%M%S.", localtime(&seconds));
-    snprintf(&now_buffer[14], 32 - 14, "%06ld", t % million);
-    return now_buffer;
+    strftime(buffer, sizeof(buffer), "%y%m%d.%H%M%S.", localtime(&seconds));
+    snprintf(buffer + 14, sizeof(buffer) - 14, "%06ld", t % million);
+    return buffer;
 }
 
 /*
