@@ -12,7 +12,7 @@ struct RedData : public MetaData {
     double bid;
     double ask;
 
-    RedData() : MetaData() {}
+    RedData() : MetaData(), bid(0.), ask(0.) {}
 
     friend std::ostream & operator<< (std::ostream & o, const RedData & self) {
         o << static_cast<const MetaData &>(self) << ',';

@@ -15,7 +15,7 @@ struct TradeData : public MetaData {
     long type;
     long cum_volume;
 
-    TradeData() : MetaData() {}
+    TradeData() : MetaData(), price(0.), volume(0), aggressor(0), type(0), cum_volume(0) {}
 
     friend std::ostream & operator<< (std::ostream & o, const TradeData & self) {
         o << static_cast<const MetaData &>(self) << ',';

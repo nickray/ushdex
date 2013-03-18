@@ -25,7 +25,7 @@ all: $(SOURCES) $(OBJECTS) $(BINARIES)
 -include $(DEPENDENCIES)
 
 # handy suffix rules
-%_rw.h: %.vars
+%_rw.h: %.vars generate.py
 	python generate.py $(<:.vars=)
 
 %.o: %.cc

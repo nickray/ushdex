@@ -20,7 +20,8 @@ struct {{Dt}}Data : public MetaData {
     {{dol}} {{name}};\
 {% endfor %}
 
-    {{Dt}}Data() : MetaData() {}
+    {{Dt}}Data() : MetaData()\
+{% for dol, name in members %}, {{name}}(0{% if dol == 'double' %}.{% endif %}){% endfor %} {}
 
     friend std::ostream & operator<< (std::ostream & o, const {{Dt}}Data & self) {
         o << static_cast<const MetaData &>(self) << ',';
@@ -110,6 +111,7 @@ class {{Dt}}Reader : public MetaReader<{{Dt}}Reader, {{Dt}}Data>, {{Dt}}Base {
 } // namespace ush
 
 #endif // {{DT}}_RW_H
+
 """
 
 def generate(datatype):
