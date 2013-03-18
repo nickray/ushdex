@@ -8,24 +8,16 @@ namespace ush {
 
 template <class Reader, class Data>
 class MultiReader {
+
 public:
     MultiReader(std::vector<Reader> readers) : readers(readers) {
-        for(auto it = readers.begin(); it != readers.end(); ++it) {
-            datas.emplace_back(Data(*it));
-        }
-        changed.resize(datas.size(), false);
-        changed_again.resize(datas.size());
+        setup();
     }
 
     MultiReader(std::vector<std::string> rel_contracts) : readers() {
-        for(auto it = rel_contracts.begin(); it != rel_contracts.end(); ++it) {
+        for(auto it = rel_contracts.begin(); it != rel_contracts.end(); ++it)
             readers.emplace_back(Reader(*it));
-        }
-        for(auto it = readers.begin(); it != readers.end(); ++it) {
-            datas.emplace_back(Data(*it));
-        }
-        changed.resize(datas.size(), false);
-        changed_again.resize(datas.size());
+        setup();
     }
 
     // N.B. we are not using coupled mode here,
@@ -70,6 +62,13 @@ protected:
     std::vector<Reader> readers;
     boost::dynamic_bitset<> changed;
     boost::dynamic_bitset<> changed_again;
+
+    inline void setup() {
+        for(auto it = readers.begin(); it != readers.end(); ++it)
+            datas.emplace_back(Data(*it));
+        changed.resize(datas.size(), false);
+        changed_again.resize(datas.size());
+    }
 
 };
 
