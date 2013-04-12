@@ -11,11 +11,11 @@ namespace ush {
 struct MetaData {
 
     long timestamp; // UDP packet arrival at FCN
-    long input_id;  // FAST sequence number
+    long exchange_id;  // FAST sequence number
     long output_id; // ctr/2
 
     friend std::ostream & operator<< (std::ostream & o, const MetaData & self) {
-        o << readable_micro(self.timestamp) << ',' << self.input_id << ',' << self.output_id;
+        o << readable_micro(self.timestamp) << ',' << self.exchange_id << ',' << self.output_id;
         return o; 
     }
 
@@ -23,7 +23,7 @@ struct MetaData {
     // one compares data before and after passing shm
     bool operator==(const MetaData & other) const {
         return (( timestamp == other.timestamp ) &&
-                ( input_id == other.input_id ));
+                ( exchange_id == other.exchange_id ));
     }
  
 };
@@ -45,7 +45,8 @@ class MetaBase {
         }
 
         MetaBase(const std::string & rel_contract, const std::string & prefix)
-            : rel_contract(rel_contract), prefix(prefix)
+        : rel_contract(rel_contract)
+        , prefix(prefix)
         {
             // Remark: In the current implementation,
             // we (currently) have output_id == ctr/2.
@@ -53,7 +54,7 @@ class MetaBase {
             
             p_ctr = locate_long_entry("ctr");
             p_timestamp = locate_long_entry("timestamp");
-            p_input_id = locate_long_entry("input_id");
+            p_exchange_id = locate_long_entry("exchange_id");
             p_output_id = locate_long_entry("output_id");
             p_ack = locate_long_entry("ack");
         }
@@ -71,7 +72,7 @@ class MetaBase {
         // pointers
         long *p_ctr;
         long *p_timestamp;
-        long *p_input_id;
+        long *p_exchange_id;
         long *p_output_id;
         long *p_ack;
 
@@ -94,7 +95,8 @@ class MetaWriter : public virtual MetaBase {
     public:
 
         MetaWriter(const std::string & rel_contract, const std::string & prefix)
-            : MetaBase(rel_contract, prefix), ctr(*MetaBase::p_ctr)
+        : MetaBase(rel_contract, prefix)
+        , ctr(*MetaBase::p_ctr)
         {
             // recover from potentially crashed previous writer
             if(ctr & 1) store<long>(p_ctr, ++ctr);
@@ -110,7 +112,7 @@ class MetaWriter : public virtual MetaBase {
             store<long>(p_ctr, ++ctr);
 
             *p_timestamp = data.timestamp;
-            *p_input_id = data.input_id;
+            *p_exchange_id = data.exchange_id;
             *p_output_id = (ctr + 1)/2;
 
             static_cast<Writer*>(this)->write_derived(data);
@@ -129,7 +131,8 @@ class MetaReader : public virtual MetaBase {
     public:
 
         MetaReader(const std::string & rel_contract, const std::string & prefix)
-            : MetaBase(rel_contract, prefix), previous_ctr(0)
+          : MetaBase(rel_contract, prefix)
+          , previous_ctr(0)
         {}
 
         bool read(Data & data, const bool coupled=false) {
@@ -141,7 +144,7 @@ class MetaReader : public virtual MetaBase {
                     return false;
 
                 data.timestamp = *p_timestamp;
-                data.input_id = *p_input_id;
+                data.exchange_id = *p_exchange_id;
                 data.output_id = *p_output_id;
 
                 static_cast<Reader*>(this)->read_derived(data);

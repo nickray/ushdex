@@ -15,7 +15,7 @@ int main (int argc, char **argv) {
 
     std::string rel_contract(argv[1]);
     ush::BookReader reader(rel_contract);
-    ush::BookData data(reader);
+    ush::BookData data(reader.depth);
 
     while(true) {
         reader.read_next(data);

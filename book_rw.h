@@ -6,61 +6,37 @@
 
 #include <algorithm>
 #include <cassert>
-#include <limits>
+//#include <limits>
 #include <sstream>
 #include <vector>
 
 namespace ush {
 
 const char * const BOOK_DATA_PREFIX = "BookData::";
-const double infinity = std::numeric_limits<double>::infinity();
+//const double infinity = std::numeric_limits<double>::infinity();
 
-class BookSize {
-    public:
-        BookSize(const long N, const long n) : N(N), n(n) {}
-        long depth() const { return N; }
-        long implied_depth() const { return n; }
-    protected:
-        long N;
-        long n;
-};
+struct BookData : public MetaData {
 
-
-struct BookData : public BookSize, public MetaData {
-
+    long depth;
     prices_t bids, asks;
     volumes_t bidvols, askvols;
-    prices_t implied_bids, implied_asks;
-    volumes_t implied_bidvols, implied_askvols;
 
-    BookData(const long N, const long n) : BookSize(N, n), MetaData(), 
-        bids(N), asks(N), bidvols(N), askvols(N),
-        implied_bids(n), implied_asks(n), implied_bidvols(n), implied_askvols(n)
-    {
-        assert(N >= 1);
-        assert(n >= 0);
-    }
-
-    BookData(const BookSize & base)
-     :  BookSize(base.depth(), base.implied_depth()),
-        MetaData(),
-        bids(N), asks(N), bidvols(N), askvols(N),
-        implied_bids(n), implied_asks(n), implied_bidvols(n), implied_askvols(n)
+    BookData(const long depth)
+      : MetaData(), depth(depth)
+      , bids(depth), asks(depth), bidvols(depth), askvols(depth)
     {
 #ifdef USE_EIGEN
         bids.setZero(); asks.setZero(); bidvols.setZero(); askvols.setZero();
-        implied_bids.setZero(); implied_asks.setZero(); implied_bidvols.setZero(); implied_askvols.setZero();
 #endif
     }
 
     friend std::ostream & operator<< (std::ostream & o, const BookData & self) {
         o << static_cast<const MetaData &>(self);
 
-        const long N(self.N);
-        const long n(self.n);
-        o << ',' << N << ',' << n;
+        const long depth(self.depth);
+        o << ',' << depth;
 
-        for(long i = 0; i != N; ++i) {
+        for(long i = 0; i != depth; ++i) {
             o << ',';
             o << self.bids[i] << ',';
             o << hex_dump(self.bids[i]) << ',';
@@ -70,57 +46,37 @@ struct BookData : public BookSize, public MetaData {
             o << self.askvols[i];
         }
 
-        if (n != 0) {
-            for(long i = 0; i != n; ++i) {
-                o << ',';
-                o << self.implied_bids[i] << ',';
-                o << hex_dump(self.implied_bids[i]) << ',';
-                o << self.implied_asks[i] << ',';
-                o << hex_dump(self.implied_asks[i]) << ',';
-                o << self.implied_bidvols[i] << ',';
-                o << self.implied_askvols[i];
-            }
-        }
-
         return o;
     }
-
-    double best_bid() { 
-        if(n == 0)
-            return bids[0];
-        else
-            return std::max(
-                bids[0] > 0         ? bids[0]         : -infinity,
-                implied_bids[0] > 0 ? implied_bids[0] : -infinity);
-    }
-
-    double best_ask() { 
-        if(n == 0)
-            return asks[0];
-        else
-            return std::min(
-            asks[0] > 0         ? asks[0]         : infinity,
-            implied_asks[0] > 0 ? implied_asks[0] : infinity); 
-    }
-
 };
 
-class BookBase : public virtual MetaBase, public BookSize {
+class BookBase : public virtual MetaBase {
+
+    public:
+        long depth;
+
     protected:
 
-        BookBase(const long N, const long n, const std::string & rel_contract, const std::string & prefix)
-            : MetaBase(rel_contract, prefix), BookSize(N, n)
+        BookBase(const long depth, const std::string & rel_contract, const std::string & prefix)
+          : MetaBase(rel_contract, prefix), depth(depth)
         {
-            p_N = locate_long_entry(std::string("N"));
-            p_n = locate_long_entry(std::string("n"));
+            p_depth = locate_long_entry(std::string("depth"));
+            store<long>(p_depth, depth);
+            lookup_pointers();
+        }
 
+        BookBase(const std::string & rel_contract, const std::string & prefix)
+          : MetaBase(rel_contract, prefix)
+        {
+            p_depth = locate_long_entry(std::string("depth"));
+            depth = load<long>(p_depth);
             lookup_pointers();
         }
 
         void lookup_pointers() {
-            p_bids.resize(N); p_asks.resize(N);
-            p_bidvols.resize(N); p_askvols.resize(N);
-            for(long i = 0; i != N; ++i) {
+            p_bids.resize(depth); p_asks.resize(depth);
+            p_bidvols.resize(depth); p_askvols.resize(depth);
+            for(long i = 0; i != depth; ++i) {
                 std::stringstream stream;
                 stream << (i + 1);
                 auto postfix1 = stream.str();
@@ -132,58 +88,30 @@ class BookBase : public virtual MetaBase, public BookSize {
                 p_bidvols[i] = locate_long_entry(std::string("bid") + postfix2);
                 p_askvols[i] = locate_long_entry(std::string("ask") + postfix2);
             }
-
-            p_implied_bids.resize(n); p_implied_asks.resize(n);
-            p_implied_bidvols.resize(n); p_implied_askvols.resize(n);
-            for(long i = 0; i != n; ++i) {
-                std::stringstream stream;
-                stream << (i + 1);
-                auto postfix1 = stream.str();
-                stream << "vol";
-                auto postfix2 = stream.str();
-
-                p_implied_bids[i] = locate_double_entry(std::string("implied_bid") + postfix1);
-                p_implied_asks[i] = locate_double_entry(std::string("implied_ask") + postfix1);
-                p_implied_bidvols[i] = locate_long_entry(std::string("implied_bid") + postfix2);
-                p_implied_askvols[i] = locate_long_entry(std::string("implied_ask") + postfix2);
-            }
         }
 
         // pointers
-        long *p_N;
-        long *p_n;
+        long *p_depth;
         std::vector<double *> p_bids, p_asks;
         std::vector<long *> p_bidvols, p_askvols;
-        std::vector<double *> p_implied_bids, p_implied_asks;
-        std::vector<long *> p_implied_bidvols, p_implied_askvols;
-
 };
 
 class BookWriter : public MetaWriter<BookWriter, BookData>, public BookBase {
 
     public:
-        BookWriter(const long N, const long n, const std::string & rel_contract)
-            : MetaBase(rel_contract, BOOK_DATA_PREFIX),
-              MetaWriter<BookWriter, BookData>(rel_contract, BOOK_DATA_PREFIX), 
-              BookBase(N, n, rel_contract, BOOK_DATA_PREFIX)
-        {
-            store<long>(p_N, N);
-            store<long>(p_n, n);
-        }
+        BookWriter(const long depth, const std::string & rel_contract)
+          : MetaBase(rel_contract, BOOK_DATA_PREFIX)
+          , MetaWriter<BookWriter, BookData>(rel_contract, BOOK_DATA_PREFIX)
+          , BookBase(depth, rel_contract, BOOK_DATA_PREFIX)
+        {}
 
         friend class MetaReader<BookWriter, BookData>;
         void write_derived(const BookData & data) {
-            for(long i = 0; i != N; ++i) {
+            for(long i = 0; i != depth; ++i) {
                 *p_bids[i] = data.bids[i];
                 *p_asks[i] = data.asks[i];
                 *p_bidvols[i] = data.bidvols[i];
                 *p_askvols[i] = data.askvols[i];
-            }
-            for(long i = 0; i != n; ++i) {
-                *p_implied_bids[i] = data.implied_bids[i];
-                *p_implied_asks[i] = data.implied_asks[i];
-                *p_implied_bidvols[i] = data.implied_bidvols[i];
-                *p_implied_askvols[i] = data.implied_askvols[i];
             }
         }
 };
@@ -191,44 +119,30 @@ class BookWriter : public MetaWriter<BookWriter, BookData>, public BookBase {
 class BookReader : public MetaReader<BookReader, BookData>, public BookBase {
 
     public:
+        // Use this if you want as much depth as MD.EXCHANGE offers
         BookReader(const std::string & rel_contract)
-            : MetaBase(rel_contract, BOOK_DATA_PREFIX),
-              MetaReader<BookReader, BookData>(rel_contract, BOOK_DATA_PREFIX), 
-              BookBase(0, 0, rel_contract, BOOK_DATA_PREFIX)
-        {
-            N = load<long>(p_N);
-            n = load<long>(p_n);
-            lookup_pointers();
-        }
+          : MetaBase(rel_contract, BOOK_DATA_PREFIX)
+          , MetaReader<BookReader, BookData>(rel_contract, BOOK_DATA_PREFIX)
+          , BookBase(rel_contract, BOOK_DATA_PREFIX)
+        {}
 
-        BookReader(const long N, const long n, const std::string & rel_contract)
-            : MetaBase(rel_contract, BOOK_DATA_PREFIX),
-              MetaReader<BookReader, BookData>(rel_contract, BOOK_DATA_PREFIX), 
-              BookBase(0, 0, rel_contract, BOOK_DATA_PREFIX)
+        // Use this if you want (possibly) less depth than MD.EXCHANGE offers
+        BookReader(const long depth, const std::string & rel_contract)
+          : MetaBase(rel_contract, BOOK_DATA_PREFIX)
+          , MetaReader<BookReader, BookData>(rel_contract, BOOK_DATA_PREFIX)
+          , BookBase(rel_contract, BOOK_DATA_PREFIX)
         {
-            long that_N = load<long>(p_N);
-            long that_n = load<long>(p_n);
-            assert(N <= that_N);
-            assert(n <= that_n);
-            this->N = N;
-            this->n = n;
-            lookup_pointers();
+            assert(depth <= this->depth);
         }
 
     protected:
         friend class MetaReader<BookReader, BookData>;
         void read_derived(BookData & data) {
-            for(long i = 0; i != N; ++i) {
+            for(long i = 0; i != depth; ++i) {
                 data.bids[i] = *p_bids[i];
                 data.asks[i] = *p_asks[i];
                 data.bidvols[i] = *p_bidvols[i];
                 data.askvols[i] = *p_askvols[i];
-            }
-            for(long i = 0; i != n; ++i) {
-                data.implied_bids[i] = *p_implied_bids[i];
-                data.implied_asks[i] = *p_implied_asks[i];
-                data.implied_bidvols[i] = *p_implied_bidvols[i];
-                data.implied_askvols[i] = *p_implied_askvols[i];
             }
         }
 

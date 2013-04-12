@@ -13,8 +13,8 @@ int main (int argc, char **argv) {
 
     std::string rel_contract(argv[1]);
     ush::BookReader reader(rel_contract);
-    std::cout << "BookData for " << rel_contract << " has depth " << reader.depth() << 
-        " and implied depth " << reader.implied_depth() << std::endl;
+    std::cout << "BookData for " << rel_contract << " has depth " << 
+        reader.depth << std::endl;
 
     return 0;
 }

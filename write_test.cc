@@ -19,8 +19,8 @@ int main (int argc, char **argv)
     cout << update_key << ": " << session.longs()[update_key] << endl;
 
     // synchronized writing
-    BookWriter writer(10, 2, "CL.F.GLOB.0");
-    BookData data(writer);
+    BookWriter writer(10, "CL.F.GLOB.0");
+    BookData data(10);
 
     data.timestamp = 1360258008084400896;
     data.bids[0] = 9611.;
@@ -36,7 +36,7 @@ int main (int argc, char **argv)
         // throughput test, allow read_test to catch up
         sleep(1);
 
-        BookWriter si_writer(1, 0, "SI.F.GLOB.0");
+        BookWriter si_writer(1, "SI.F.GLOB.0");
         for(long i = 1; i != million + 1; ++i) {
             data.timestamp = data.bids[0] = data.asks[0] =
                 data.bidvols[0] = data.askvols[0] = i;
@@ -55,19 +55,18 @@ int main (int argc, char **argv)
     data.bids[0] = 0.;
 
     for(long N = 1; N <= 20; ++N) {
-        for(long n = 1; n <= 5; ++n) {
-            BookWriter writer(N, n, "FDAX.F.XEUR.0");
-            BookReader reader("FDAX.F.XEUR.0");
-            BookData dataNn(reader);
+        BookWriter writer(N, "FDAX.F.XEUR.0");
+        BookReader reader("FDAX.F.XEUR.0");
+        BookData dataN(reader.depth);
 
-            before = nano();
-            for(long i = 0; i != M; ++i) {
-                writer.write(dataNn);
-                reader.read(dataNn);
-            }
-            after = nano();
-            cout << "Throughput for BookData(" << N << ", " << n << "): " << float(after - before)/M << " nanoseconds." << endl;
+        before = nano();
+        for(long i = 0; i != M; ++i) {
+            writer.write(dataN);
+            reader.read(dataN);
         }
+        after = nano();
+        cout << "Throughput for BookData(" << N << "): " << 
+            float(after - before)/M << " nanoseconds." << endl;
     }
 
     return 0;

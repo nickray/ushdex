@@ -12,8 +12,8 @@ struct BestAdaptor {
     BestAdaptor(BookData & data) : data(data) {}
 
     void apply() {
-        bid = data.best_bid();
-        ask = data.best_ask();
+        bid = data.bids[0];
+        ask = data.asks[0];
     }
 
     friend std::ostream & operator<< (std::ostream & o, const BestAdaptor & self) {

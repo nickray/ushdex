@@ -65,7 +65,7 @@ protected:
 
     inline void setup() {
         for(auto it = readers.cbegin(); it != readers.cend(); ++it)
-            datas.emplace_back(Data(*it));
+            datas.emplace_back(Data(it->depth));
         changed.resize(datas.size(), false);
         changed_again.resize(datas.size());
     }

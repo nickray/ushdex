@@ -4,18 +4,17 @@
 
 int main () {
     std::string rel_contract("CL.F.GLOB.0");
-    ush::BookWriter writer(5, 1, rel_contract);
+    ush::BookWriter writer(5, rel_contract);
 
-    ush::BookData data(writer);
+    ush::BookData data(5);
 
     data.timestamp = 1361776225482492;
-    data.input_id = 23423;
+    data.exchange_id = 23423;
 
     data.bids[3] = 9611.;
     data.asks[4] = 9612.;
     data.bidvols[0] = 43;
     data.askvols[2] = 19;
-    data.implied_bids[0] = 9610.;
 
     writer.write(data);
 

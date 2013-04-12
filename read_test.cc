@@ -17,7 +17,7 @@ int main ()
     
     // synchronized reading
     BookReader reader("CL.F.GLOB.0");
-    BookData data(reader);
+    BookData data(reader.depth);
 
     reader.read(data);
     cout << "Read data for CL.F.GLOB.0:\n" << data << endl;
@@ -27,11 +27,11 @@ int main ()
     ES_reader.read(data);
     cout << "Read data for ES.F.GLOB.0:\n" << data << endl;
 
-    cout << "best_bid:" << data.best_bid() << endl;
-    cout << "best_ask:" << data.best_ask() << endl;
-    data.bids[0] = data.implied_asks[0] = 3.;
-    cout << "best_bid:" << data.best_bid() << endl;
-    cout << "best_ask:" << data.best_ask() << endl;
+    cout << "best_bid:" << data.bids[0] << endl;
+    cout << "best_ask:" << data.asks[0] << endl;
+    data.bids[0] = data.asks[0] = 3.;
+    cout << "best_bid:" << data.bids[0] << endl;
+    cout << "best_ask:" << data.asks[0] << endl;
 
     // throughput test
     BookReader si_reader("SI.F.GLOB.0");

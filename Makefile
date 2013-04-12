@@ -3,6 +3,7 @@ BOOST_LOC := /opt/boost_1_53_0
 EIGEN_LOC := /opt/eigen-3.1.2
 EIGEN_ARCH_LOC := /usr/include/eigen3
 CXXFLAGS := -std=c++0x -Wall -MMD -I$(BOOST_LOC)
+#CPLUS_INCLUDE_PATH=$(EIGEN_ARCH_LOC):$(EIGEN_LOC):$(BOOST_LOC)
 
 SOURCES := $(wildcard *.cc)
 OBJECTS := $(SOURCES:.cc=.o)
