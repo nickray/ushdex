@@ -1,7 +1,7 @@
 #include "book_rw.h"
 
 #include <iostream>
-
+using namespace std;
 int main () {
     std::string rel_contract("CL.F.GLOB.0");
 
@@ -14,9 +14,7 @@ int main () {
     ush::BookReader restricted_reader(1, rel_contract);
     ush::BookData restricted_data(1);
     restricted_reader.read(restricted_data);
+    std::cout << "But we can also read restricted data:\n" << restricted_data << std::endl;
 
-    std::cout << "But we can also read restricted data: " << restricted_data << std::endl;
-
-    std::cout << "returning" << std::endl;
     return 0;
 }

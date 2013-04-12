@@ -6,14 +6,12 @@
 
 #include <algorithm>
 #include <cassert>
-//#include <limits>
 #include <sstream>
 #include <vector>
 
 namespace ush {
 
 const char * const BOOK_DATA_PREFIX = "BookData::";
-//const double infinity = std::numeric_limits<double>::infinity();
 
 struct BookData : public MetaData {
 
@@ -61,7 +59,6 @@ class BookBase : public virtual MetaBase {
           : MetaBase(rel_contract, prefix), depth(depth)
         {
             p_depth = locate_long_entry(std::string("depth"));
-            store<long>(p_depth, depth);
             lookup_pointers();
         }
 
@@ -103,7 +100,9 @@ class BookWriter : public MetaWriter<BookWriter, BookData>, public BookBase {
           : MetaBase(rel_contract, BOOK_DATA_PREFIX)
           , MetaWriter<BookWriter, BookData>(rel_contract, BOOK_DATA_PREFIX)
           , BookBase(depth, rel_contract, BOOK_DATA_PREFIX)
-        {}
+        {
+            store<long>(p_depth, depth);
+        }
 
         friend class MetaReader<BookWriter, BookData>;
         void write_derived(const BookData & data) {
@@ -132,7 +131,9 @@ class BookReader : public MetaReader<BookReader, BookData>, public BookBase {
           , MetaReader<BookReader, BookData>(rel_contract, BOOK_DATA_PREFIX)
           , BookBase(rel_contract, BOOK_DATA_PREFIX)
         {
+            // make sure offered depth (read from shm) is big enough
             assert(depth <= this->depth);
+            this->depth = depth;
         }
 
     protected:
