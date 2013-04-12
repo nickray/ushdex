@@ -25,6 +25,27 @@ struct MetaData {
         return (( timestamp == other.timestamp ) &&
                 ( exchange_id == other.exchange_id ));
     }
+
+    long to_binary(const std::string& rel_contract, char * buffer) {
+
+        strcpy(buffer, rel_contract.c_str());
+        long offset = rel_contract.size() + 1;
+        long num = sizeof(this);
+        memcpy(buffer + offset, this, num);
+
+        return offset + num;
+    };
+
+    long from_binary(const char * const buffer, std::string & rel_contract) {
+        
+        rel_contract = buffer;
+        long offset = rel_contract.size() + 1;
+
+        long num = sizeof(this);
+        memcpy(this, buffer + offset, num);
+
+        return offset + num;
+    }
  
 };
 

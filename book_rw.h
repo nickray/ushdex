@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cstring>
 #include <sstream>
 #include <vector>
 
@@ -45,6 +46,53 @@ struct BookData : public MetaData {
         }
 
         return o;
+    }
+
+    long to_binary(const std::string& rel_contract, char * buffer) {
+
+        long offset = MetaData::to_binary(rel_contract, buffer);
+
+        long num = sizeof(long);
+        memcpy(buffer + offset, &depth, num);
+        offset += num;
+
+        num = depth*sizeof(double);
+        memcpy(buffer + offset, bids.data(), num);
+        offset += num;
+        memcpy(buffer + offset, asks.data(), num);
+        offset += num;
+
+        num = depth*sizeof(long);
+        memcpy(buffer + offset, bidvols.data(), num);
+        offset += num;
+        memcpy(buffer + offset, askvols.data(), num);
+        offset += num;
+
+        return offset;
+
+    };
+
+    long from_binary(const char * const buffer, std::string & rel_contract) {
+
+        long offset = MetaData::from_binary(buffer, rel_contract);
+
+        long num = sizeof(long);
+        memcpy(&depth, buffer + offset, num);
+        offset += num;
+
+        num = depth*sizeof(double);
+        memcpy(bids.data(), buffer + offset, num);
+        offset += num;
+        memcpy(asks.data(), buffer + offset, num);
+        offset += num;
+
+        num = depth*sizeof(long);
+        memcpy(bidvols.data(), buffer + offset, num);
+        offset += num;
+        memcpy(askvols.data(), buffer + offset, num);
+        offset += num;
+
+        return offset;
     }
 };
 
