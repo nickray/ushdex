@@ -24,25 +24,48 @@ struct {{Dt}}Data : public MetaData {
 {% for dol, name in members %}, {{name}}(0{% if dol == 'double' %}.{% endif %}){% endfor %} {}
 
     friend std::ostream & operator<< (std::ostream & o, const {{Dt}}Data & self) {
-        o << static_cast<const MetaData &>(self) << ',';
+        o << static_cast<const MetaData &>(self);
 
-{% for dol, name in members[:-1] %}\
-        o << self.{{name}} << ',';
+{% for dol, name in members %}\
+        o << ',' << self.{{name}};
 {% if dol == 'double' %}\
-        o << hex_dump(self.{{name}}) << ',';
+        o << ',' << hex_dump(self.{{name}});
 {% endif %}\
 {% endfor %}\
-{% if members[-1][0]  == 'double' %}\
-        o << self.{{members[-1][1]}} << ',';
-{% else %}\
-        o << self.{{members[-1][1]}};
-{% endif %}\
-{% if members[-1][0]  == 'double' %}\
-        o << hex_dump(self.{{members[-1][1]}});
-{% endif %}\
         return o;
     }
 
+    long serialize(const std::string& rel_contract, char * buffer) {
+
+        long offset = MetaData::serialize(rel_contract, buffer);
+
+        long num;
+{% for dol, name in members %}\
+        num = sizeof({{dol}});
+        memcpy(buffer + offset, &{{name}}, num);
+        offset += num;
+{% endfor %}\
+
+        return offset;
+
+    };
+
+    long deserialize(const char * const buffer, std::string & rel_contract) {
+
+        long offset = MetaData::deserialize(buffer, rel_contract);
+
+        long num;
+{% for dol, name in members %}\
+        num = sizeof({{dol}});
+        memcpy(&{{name}}, buffer + offset, num);
+        offset += num;
+{% endfor %}\
+
+        return offset;
+    }
+/*
+ *  Suppressed, see comments in MetaData::operator==
+ *
     bool operator==(const {{Dt}}Data & other) const {
         return (MetaData::operator==(other) &&
 {% for dol, name in members %}\
@@ -50,6 +73,7 @@ struct {{Dt}}Data : public MetaData {
 {% endfor %}\
                 true);
     }
+*/
 
 };
 

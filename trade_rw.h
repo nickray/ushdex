@@ -18,17 +18,68 @@ struct TradeData : public MetaData {
     TradeData() : MetaData(), price(0.), volume(0), aggressor(0), type(0), cum_volume(0) {}
 
     friend std::ostream & operator<< (std::ostream & o, const TradeData & self) {
-        o << static_cast<const MetaData &>(self) << ',';
+        o << static_cast<const MetaData &>(self);
 
-        o << self.price << ',';
-        o << hex_dump(self.price) << ',';
-        o << self.volume << ',';
-        o << self.aggressor << ',';
-        o << self.type << ',';
-        o << self.cum_volume;
+        o << ',' << self.price;
+        o << ',' << hex_dump(self.price);
+        o << ',' << self.volume;
+        o << ',' << self.aggressor;
+        o << ',' << self.type;
+        o << ',' << self.cum_volume;
         return o;
     }
 
+    long serialize(const std::string& rel_contract, char * buffer) {
+
+        long offset = MetaData::serialize(rel_contract, buffer);
+
+        long num;
+        num = sizeof(double);
+        memcpy(buffer + offset, &price, num);
+        offset += num;
+        num = sizeof(long);
+        memcpy(buffer + offset, &volume, num);
+        offset += num;
+        num = sizeof(long);
+        memcpy(buffer + offset, &aggressor, num);
+        offset += num;
+        num = sizeof(long);
+        memcpy(buffer + offset, &type, num);
+        offset += num;
+        num = sizeof(long);
+        memcpy(buffer + offset, &cum_volume, num);
+        offset += num;
+
+        return offset;
+
+    };
+
+    long deserialize(const char * const buffer, std::string & rel_contract) {
+
+        long offset = MetaData::deserialize(buffer, rel_contract);
+
+        long num;
+        num = sizeof(double);
+        memcpy(&price, buffer + offset, num);
+        offset += num;
+        num = sizeof(long);
+        memcpy(&volume, buffer + offset, num);
+        offset += num;
+        num = sizeof(long);
+        memcpy(&aggressor, buffer + offset, num);
+        offset += num;
+        num = sizeof(long);
+        memcpy(&type, buffer + offset, num);
+        offset += num;
+        num = sizeof(long);
+        memcpy(&cum_volume, buffer + offset, num);
+        offset += num;
+
+        return offset;
+    }
+/*
+ *  Suppressed, see comments in MetaData::operator==
+ *
     bool operator==(const TradeData & other) const {
         return (MetaData::operator==(other) &&
                ( price == other.price ) &&
@@ -38,6 +89,7 @@ struct TradeData : public MetaData {
                ( cum_volume == other.cum_volume ) &&
                 true);
     }
+*/
 
 };
 

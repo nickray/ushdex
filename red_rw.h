@@ -15,21 +15,55 @@ struct RedData : public MetaData {
     RedData() : MetaData(), bid(0.), ask(0.) {}
 
     friend std::ostream & operator<< (std::ostream & o, const RedData & self) {
-        o << static_cast<const MetaData &>(self) << ',';
+        o << static_cast<const MetaData &>(self);
 
-        o << self.bid << ',';
-        o << hex_dump(self.bid) << ',';
-        o << self.ask << ',';
-        o << hex_dump(self.ask);
+        o << ',' << self.bid;
+        o << ',' << hex_dump(self.bid);
+        o << ',' << self.ask;
+        o << ',' << hex_dump(self.ask);
         return o;
     }
 
+    long serialize(const std::string& rel_contract, char * buffer) {
+
+        long offset = MetaData::serialize(rel_contract, buffer);
+
+        long num;
+        num = sizeof(double);
+        memcpy(buffer + offset, &bid, num);
+        offset += num;
+        num = sizeof(double);
+        memcpy(buffer + offset, &ask, num);
+        offset += num;
+
+        return offset;
+
+    };
+
+    long deserialize(const char * const buffer, std::string & rel_contract) {
+
+        long offset = MetaData::deserialize(buffer, rel_contract);
+
+        long num;
+        num = sizeof(double);
+        memcpy(&bid, buffer + offset, num);
+        offset += num;
+        num = sizeof(double);
+        memcpy(&ask, buffer + offset, num);
+        offset += num;
+
+        return offset;
+    }
+/*
+ *  Suppressed, see comments in MetaData::operator==
+ *
     bool operator==(const RedData & other) const {
         return (MetaData::operator==(other) &&
                ( bid == other.bid ) &&
                ( ask == other.ask ) &&
                 true);
     }
+*/
 
 };
 

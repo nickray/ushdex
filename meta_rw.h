@@ -21,12 +21,18 @@ struct MetaData {
 
     // do not compare output_id here, because typically
     // one compares data before and after passing shm
+    //
+    // N.B. this operator is be sufficient for derived
+    //      classes too, since reading is atomic and
+    //      exchange_id determines the tick.
+    //
     bool operator==(const MetaData & other) const {
         return (( timestamp == other.timestamp ) &&
                 ( exchange_id == other.exchange_id ));
     }
 
-    long to_binary(const std::string& rel_contract, char * buffer) {
+    // serializes to buffer, returning size used
+    long serialize(const std::string& rel_contract, char * buffer) {
 
         strcpy(buffer, rel_contract.c_str());
         long offset = rel_contract.size() + 1;
@@ -36,12 +42,14 @@ struct MetaData {
         return offset + num;
     };
 
-    long from_binary(const char * const buffer, std::string & rel_contract) {
+    // deserializes from buffer, returning size used and rel_contract
+    long deserialize(const char * const buffer, std::string & rel_contract) {
         
         rel_contract = buffer;
         long offset = rel_contract.size() + 1;
-
-        long num = sizeof(this);
+        long num = sizeof(*this);
+        //using namespace std;
+        //cout << "sizeof(*this) in MetaData = " << sizeof(*this) << endl;
         memcpy(this, buffer + offset, num);
 
         return offset + num;

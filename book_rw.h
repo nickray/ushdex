@@ -10,6 +10,8 @@
 #include <sstream>
 #include <vector>
 
+//#include <iostream>
+
 namespace ush {
 
 const char * const BOOK_DATA_PREFIX = "BookData::";
@@ -48,9 +50,11 @@ struct BookData : public MetaData {
         return o;
     }
 
-    long to_binary(const std::string& rel_contract, char * buffer) {
+    long serialize(const std::string& rel_contract, char * buffer) {
 
-        long offset = MetaData::to_binary(rel_contract, buffer);
+        //using namespace std;
+        //cout << "sizeof(*this) in BookData = " << sizeof(*this) << endl;
+        long offset = MetaData::serialize(rel_contract, buffer);
 
         long num = sizeof(long);
         memcpy(buffer + offset, &depth, num);
@@ -72,9 +76,9 @@ struct BookData : public MetaData {
 
     };
 
-    long from_binary(const char * const buffer, std::string & rel_contract) {
+    long deserialize(const char * const buffer, std::string & rel_contract) {
 
-        long offset = MetaData::from_binary(buffer, rel_contract);
+        long offset = MetaData::deserialize(buffer, rel_contract);
 
         long num = sizeof(long);
         memcpy(&depth, buffer + offset, num);
