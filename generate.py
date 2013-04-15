@@ -39,12 +39,10 @@ struct {{Dt}}Data : public MetaData {
 
         long offset = MetaData::serialize(rel_contract, buffer);
 
-        long num;
-{% for dol, name in members %}\
-        num = sizeof({{dol}});
-        memcpy(buffer + offset, &{{name}}, num);
+        void * const start(static_cast<char * const>(static_cast<void * const>(this)) + sizeof(MetaData));
+        long num = sizeof(*this) - sizeof(MetaData);
+        memcpy(buffer + offset, start, num);
         offset += num;
-{% endfor %}\
 
         return offset;
 
@@ -54,26 +52,13 @@ struct {{Dt}}Data : public MetaData {
 
         long offset = MetaData::deserialize(buffer, rel_contract);
 
-        long num;
-{% for dol, name in members %}\
-        num = sizeof({{dol}});
-        memcpy(&{{name}}, buffer + offset, num);
+        void * start(static_cast<char *>(static_cast<void *>(this)) + sizeof(MetaData));
+        long num = sizeof(*this) - sizeof(MetaData);
+        memcpy(start, buffer + offset, num);
         offset += num;
-{% endfor %}\
 
         return offset;
     }
-/*
- *  Suppressed, see comments in MetaData::operator==
- *
-    bool operator==(const {{Dt}}Data & other) const {
-        return (MetaData::operator==(other) &&
-{% for dol, name in members %}\
-               ( {{name}} == other.{{name}} ) &&
-{% endfor %}\
-                true);
-    }
-*/
 
 };
 

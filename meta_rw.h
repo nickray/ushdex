@@ -19,7 +19,7 @@ struct MetaData {
         return o; 
     }
 
-    // do not compare output_id here, because typically
+    // Do not compare output_id here, because typically
     // one compares data before and after passing shm
     //
     // N.B. this operator is be sufficient for derived
@@ -36,10 +36,11 @@ struct MetaData {
 
         strcpy(buffer, rel_contract.c_str());
         long offset = rel_contract.size() + 1;
-        long num = sizeof(this);
+        long num = sizeof(*this);
         memcpy(buffer + offset, this, num);
+        offset += num;
 
-        return offset + num;
+        return offset;
     };
 
     // deserializes from buffer, returning size used and rel_contract
@@ -48,11 +49,10 @@ struct MetaData {
         rel_contract = buffer;
         long offset = rel_contract.size() + 1;
         long num = sizeof(*this);
-        //using namespace std;
-        //cout << "sizeof(*this) in MetaData = " << sizeof(*this) << endl;
         memcpy(this, buffer + offset, num);
+        offset += num;
 
-        return offset + num;
+        return offset;
     }
  
 };

@@ -28,12 +28,9 @@ struct RedData : public MetaData {
 
         long offset = MetaData::serialize(rel_contract, buffer);
 
-        long num;
-        num = sizeof(double);
-        memcpy(buffer + offset, &bid, num);
-        offset += num;
-        num = sizeof(double);
-        memcpy(buffer + offset, &ask, num);
+        void * const start(static_cast<char * const>(static_cast<void * const>(this)) + sizeof(MetaData));
+        long num = sizeof(*this) - sizeof(MetaData);
+        memcpy(buffer + offset, start, num);
         offset += num;
 
         return offset;
@@ -44,26 +41,13 @@ struct RedData : public MetaData {
 
         long offset = MetaData::deserialize(buffer, rel_contract);
 
-        long num;
-        num = sizeof(double);
-        memcpy(&bid, buffer + offset, num);
-        offset += num;
-        num = sizeof(double);
-        memcpy(&ask, buffer + offset, num);
+        void * start(static_cast<char *>(static_cast<void *>(this)) + sizeof(MetaData));
+        long num = sizeof(*this) - sizeof(MetaData);
+        memcpy(start, buffer + offset, num);
         offset += num;
 
         return offset;
     }
-/*
- *  Suppressed, see comments in MetaData::operator==
- *
-    bool operator==(const RedData & other) const {
-        return (MetaData::operator==(other) &&
-               ( bid == other.bid ) &&
-               ( ask == other.ask ) &&
-                true);
-    }
-*/
 
 };
 

@@ -33,21 +33,9 @@ struct TradeData : public MetaData {
 
         long offset = MetaData::serialize(rel_contract, buffer);
 
-        long num;
-        num = sizeof(double);
-        memcpy(buffer + offset, &price, num);
-        offset += num;
-        num = sizeof(long);
-        memcpy(buffer + offset, &volume, num);
-        offset += num;
-        num = sizeof(long);
-        memcpy(buffer + offset, &aggressor, num);
-        offset += num;
-        num = sizeof(long);
-        memcpy(buffer + offset, &type, num);
-        offset += num;
-        num = sizeof(long);
-        memcpy(buffer + offset, &cum_volume, num);
+        void * const start(static_cast<char * const>(static_cast<void * const>(this)) + sizeof(MetaData));
+        long num = sizeof(*this) - sizeof(MetaData);
+        memcpy(buffer + offset, start, num);
         offset += num;
 
         return offset;
@@ -58,38 +46,13 @@ struct TradeData : public MetaData {
 
         long offset = MetaData::deserialize(buffer, rel_contract);
 
-        long num;
-        num = sizeof(double);
-        memcpy(&price, buffer + offset, num);
-        offset += num;
-        num = sizeof(long);
-        memcpy(&volume, buffer + offset, num);
-        offset += num;
-        num = sizeof(long);
-        memcpy(&aggressor, buffer + offset, num);
-        offset += num;
-        num = sizeof(long);
-        memcpy(&type, buffer + offset, num);
-        offset += num;
-        num = sizeof(long);
-        memcpy(&cum_volume, buffer + offset, num);
+        void * start(static_cast<char *>(static_cast<void *>(this)) + sizeof(MetaData));
+        long num = sizeof(*this) - sizeof(MetaData);
+        memcpy(start, buffer + offset, num);
         offset += num;
 
         return offset;
     }
-/*
- *  Suppressed, see comments in MetaData::operator==
- *
-    bool operator==(const TradeData & other) const {
-        return (MetaData::operator==(other) &&
-               ( price == other.price ) &&
-               ( volume == other.volume ) &&
-               ( aggressor == other.aggressor ) &&
-               ( type == other.type ) &&
-               ( cum_volume == other.cum_volume ) &&
-                true);
-    }
-*/
 
 };
 

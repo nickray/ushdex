@@ -10,8 +10,6 @@
 #include <sstream>
 #include <vector>
 
-//#include <iostream>
-
 namespace ush {
 
 const char * const BOOK_DATA_PREFIX = "BookData::";
@@ -52,8 +50,6 @@ struct BookData : public MetaData {
 
     long serialize(const std::string& rel_contract, char * buffer) {
 
-        //using namespace std;
-        //cout << "sizeof(*this) in BookData = " << sizeof(*this) << endl;
         long offset = MetaData::serialize(rel_contract, buffer);
 
         long num = sizeof(long);
@@ -148,6 +144,8 @@ class BookBase : public virtual MetaBase {
 class BookWriter : public MetaWriter<BookWriter, BookData>, public BookBase {
 
     public:
+        // Note that BookWriter.write can process BookData with
+        // BookWriter.depth <= BookData.depth, if only that much is required
         BookWriter(const long depth, const std::string & rel_contract)
           : MetaBase(rel_contract, BOOK_DATA_PREFIX)
           , MetaWriter<BookWriter, BookData>(rel_contract, BOOK_DATA_PREFIX)
