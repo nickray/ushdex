@@ -17,7 +17,7 @@ int main (int argc, char **argv) {
     std::vector<ush::BookReader> readers;
     for(int i = 1; i != argc; ++i) {
         std::string rel_contract(argv[i]);
-        readers.emplace_back(ush::BookReader(rel_contract));
+        readers.emplace_back(rel_contract);
     }
 
     ush::MultiReader<ush::BookReader, ush::BookData> multireader(readers);
@@ -25,7 +25,7 @@ int main (int argc, char **argv) {
 
     std::vector<std::string> rel_contracts;
     for(int i = 1; i != argc; ++i) {
-        rel_contracts.emplace_back(std::string(argv[i]));
+        rel_contracts.emplace_back(argv[i]);
     }
 
     ush::MultiReader<ush::BookReader, ush::BookData> multireader(rel_contracts);

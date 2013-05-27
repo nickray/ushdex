@@ -16,7 +16,7 @@ public:
 
     MultiReader(const std::vector<std::string> & rel_contracts) : readers() {
         for(auto it = rel_contracts.cbegin(); it != rel_contracts.cend(); ++it)
-            readers.emplace_back(Reader(*it));
+            readers.emplace_back(*it);
         setup();
     }
 
@@ -65,7 +65,7 @@ protected:
 
     inline void setup() {
         for(auto it = readers.cbegin(); it != readers.cend(); ++it)
-            datas.emplace_back(Data(it->depth));
+            datas.emplace_back(it->depth);
         changed.resize(datas.size(), false);
         changed_again.resize(datas.size());
     }
