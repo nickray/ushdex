@@ -9,7 +9,7 @@ namespace ush {
 static const char * const standard_shm_name = "MD.EXCHANGE";
 static const std::size_t default_shm_size = 524288;
 
-class SessionKey;
+struct SessionKey;
 
 struct connect_only_t {};
 static const connect_only_t connect_only = connect_only_t();
