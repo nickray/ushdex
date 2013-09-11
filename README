@@ -1,9 +1,9 @@
-ushdex (Universal SHared memory Data EXchange)
-==============================================
+ushdex // Universal SHared memory Data EXchange
+===============================================
 
 Flexible, efficient header-only library to exchange
-POD ("plain old data") reducible to int32 and float32
-members betwen processes.
+POD ("plain old data") reducible to int64 and float64
+members between processes on x86_64 machines.
 
 For an example, look at minimal_writer_example
 and minimal_reader_example.
@@ -11,13 +11,13 @@ and minimal_reader_example.
 Shareable data can be defined in .vars files,
 examples are trade.vars and red.vars. Running
 
-% python generate.py X
+% python generate.py <X>
 
-generates an X_rw.h header file out of X.vars.
+generates an <X>_rw.h header file from <X>.vars.
 
-topN_rw.h is an example of a more complicated
-POD struct that still can be reduced to double/long
-and hence exchanged via ushdex.
+book_rw.h is an example of a more complicated
+POD struct from finance that still can be reduced to
+double/long and hence exchanged via ushdex.
 
 The shared memory is dealt with via a ShmSession
 in session.h which uses Boost.Interprocess. It
@@ -25,12 +25,24 @@ is a fixed segment containing two hash maps from
 key to double/long, where key is specified by
 relative contract and entry name. These maps are
 contained in /dev/shm/MD.EXCHANGE, which must
-be created before use via the tool ./clean_shm;
+be created before use via the tool ./ush_clean;
 all writers and readers assume its existence.
 
-The tool ./list lists all keys and corresponding
+The tool ./ush_list lists all keys and corresponding
 values currently in the /dev/shm/MD.EXCHANGE maps.
 
-The tool ./lookup <rel_contract> <data_item>
+The tool ./ush_lookup <rel_contract> <data_item>
 returns the value associated to a given key.
+
+Compilation
+-----------
+
+* Arch Linux: should compile as is, with necessary
+  dependencies (Boost, g++,...) installed
+
+* CentOS 6.4: install gcc 4.7 as described in
+  http://superuser.com/questions/381160/install-gcc-4-7-on-centos
+  and run "make get_boost" for an up-to-date Boost since
+  gcc 4.7 requires Boost >= 1.48, see
+  https://blog.flameeyes.eu/2012/10/gentoo-linux-health-report-october-2012-edition
 
